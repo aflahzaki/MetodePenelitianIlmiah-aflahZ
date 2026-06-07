@@ -155,7 +155,7 @@ $^{2}$ \quad Informatika, Telkom University, Bandung, Indonesia\\
 \subsection{Latar Belakang}
 \label{subsec:latar_belakang}
 
-Kualitas air minum yang memenuhi standar kelayakan merupakan prasyarat fundamental dalam menjaga kesehatan masyarakat dan mendukung keberlanjutan ekosistem perairan. Penentuan status kelayakan konsumsi air bergantung pada analisis komprehensif terhadap parameter fisikokimia, seperti tingkat keasaman (pH), kekeruhan (\textit{turbidity}), total padatan terlarut (\textit{Total Dissolved Solids}, TDS), kloramin, sulfat, konduktivitas, karbon organik, dan trihalometana \cite{aslam2022water, park2022ensemble}. Parameter-parameter tersebut saling memengaruhi secara non-linear dan memiliki variabilitas alami yang tinggi akibat perbedaan kondisi lingkungan serta keterbatasan presisi pengukuran instrumen \cite{albataineh2026hybrid}. Variabilitas inheren ini menciptakan tingkat ketidakpastian (\textit{uncertainty}) yang signifikan pada data observasi, sehingga menuntut pendekatan pemodelan yang mampu mengakomodasi karakteristik stokastik tersebut.
+Kualitas air minum yang memenuhi standar kelayakan merupakan prasyarat fundamental dalam menjaga kesehatan masyarakat dan mendukung keberlanjutan ekosistem perairan. Penentuan status kelayakan konsumsi air bergantung pada analisis komprehensif terhadap parameter fisikokimia, seperti tingkat keasaman (pH), kekeruhan (\textit{turbidity}), total padatan terlarut (\textit{Total Dissolved Solids}, TDS), kloramin, sulfat, konduktivitas, karbon organik, dan trihalometana \cite{aslam2022water, park2022ensemble, ahmed2022water, uddin2022review}. Parameter-parameter tersebut saling memengaruhi secara non-linear dan memiliki variabilitas alami yang tinggi akibat perbedaan kondisi lingkungan serta keterbatasan presisi pengukuran instrumen \cite{albataineh2026hybrid}. Variabilitas inheren ini menciptakan tingkat ketidakpastian (\textit{uncertainty}) yang signifikan pada data observasi, sehingga menuntut pendekatan pemodelan yang mampu mengakomodasi karakteristik stokastik tersebut.
 
 Dalam dekade terakhir, pemanfaatan \textit{machine learning} (ML) untuk analisis kualitas air berkembang pesat. Berbagai algoritma berbasis \textit{ensemble}, seperti \textit{Random Forest} (RF) dan \textit{eXtreme Gradient Boosting} (XGBoost), telah banyak diterapkan untuk klasifikasi kelayakan air minum \cite{aslam2022water, park2022ensemble, albataineh2026hybrid}. Algoritma-algoritma tersebut mampu menangkap hubungan kompleks antar parameter fisikokimia dan menghasilkan prediksi dengan akurasi yang kompetitif. Namun, pendekatan konvensional tersebut bersifat deterministik, di mana model hanya menghasilkan \textit{point estimate} berupa label klasifikasi atau probabilitas titik tunggal tanpa memodelkan struktur distribusi penuh dari ketidakpastian prediksi \cite{duan2020ngboost}. Dalam konteks pengambilan keputusan berisiko---seperti penentuan kelayakan air minum yang berdampak langsung pada kesehatan publik---ketidakmampuan model untuk mengkuantifikasi tingkat kepercayaan (\textit{confidence}) terhadap prediksi yang dihasilkan menjadi kelemahan mendasar. Prediksi tunggal tanpa interval kepercayaan dapat menyesatkan operator pengolahan air, terutama pada instance yang berada di dekat ambang batas keputusan (\textit{decision boundary}).
 
@@ -258,7 +258,7 @@ Di luar domain kualitas air, berbagai penelitian telah menunjukkan keunggulan pe
 
 Li et al. \cite{li2024battery} mengimplementasikan NGBoost untuk estimasi \textit{State of Charge} (SoC) baterai secara probabilistik, membuktikan kemampuan model dalam menghasilkan prediksi terkalibrasi dengan interval kepercayaan. Pada domain tersebut, ketidakpastian pengukuran sensor yang tinggi menuntut pendekatan yang mampu mengkuantifikasi ketidakpastian prediksi, di mana NGBoost terbukti lebih andal dibandingkan estimasi deterministik. Sementara itu, Zhu et al. \cite{zhu2023hybrid} mengintegrasikan SMOTE-ENN dengan NGBoost untuk prediksi risiko finansial, di mana pendekatan probabilistik tersebut mampu mengkuantifikasi ketidakpastian pada data dengan kelas tidak seimbang. Studi-studi tersebut memberikan indikasi kuat bahwa pendekatan probabilistik, sebagaimana diilustrasikan oleh NGBoost, dapat diadaptasi untuk domain kualitas air di mana ketidakpastian parameter fisikokimia menjadi karakteristik inheren.
 
-Berdasarkan kajian terhadap penelitian-penelitian terdahulu, diketahui bahwa domain kualitas air masih didominasi oleh pendekatan deterministik yang tidak mengakomodasi ketidakpastian prediksi. Tabel~\ref{tab:perbandingan_penelitian} menyajikan perbandingan komprehensif terhadap penelitian terdahulu berdasarkan dimensi metodologi, tipe prediksi, dan domain aplikasi.
+Berdasarkan kajian terhadap penelitian-penelitian terdahulu, diketahui bahwa domain kualitas air masih didominasi oleh pendekatan deterministik yang tidak mengakomodasi ketidakpastian prediksi. Selain studi-studi di atas, penelitian oleh Ahmed et al. \cite{ahmed2022water} dan Uddin et al. \cite{uddin2022review} secara komprehensif meninjau penerapan \textit{machine learning} pada pemantauan kualitas air dan mengonfirmasi dominasi pendekatan deterministik. Khoi et al. \cite{khoi2022water} dan Sakaa et al. \cite{sakaa2022water} juga menerapkan model \textit{ensemble} untuk prediksi indeks kualitas air tanpa menyertakan kuantifikasi ketidakpastian probabilistik. Tabel~\ref{tab:perbandingan_penelitian} menyajikan perbandingan komprehensif terhadap penelitian terdahulu berdasarkan dimensi metodologi, tipe prediksi, dan domain aplikasi.
 
 \begin{table}[htbp]
 \caption{Perbandingan Penelitian Terdahulu}
@@ -302,7 +302,7 @@ Dataset \textit{Water Potability} yang digunakan pada penelitian ini terdiri ata
 
 \textit{Natural Gradient Boosting} (NGBoost) merupakan paradigma pembelajaran mesin probabilistik yang memodelkan distribusi penuh $P(y \mid \mathbf{x})$ sebagai output prediksi, bukan sekadar nilai ekspektasi tunggal. NGBoost diperkenalkan oleh Duan et al. \cite{duan2020ngboost} sebagai algoritma \textit{boosting} generik yang memodelkan distribusi penuh probabilitas dengan memanfaatkan \textit{Natural Gradient} pada ruang parameter distribusi.
 
-Mekanisme inti yang membedakan NGBoost dari metode \textit{boosting} konvensional terletak pada penggunaan \textit{Natural Gradient} untuk \textit{update} parameter distribusi. Berbeda dengan \textit{gradient descent} standar yang beroperasi pada ruang Euclidian, \textit{Natural Gradient} memanfaatkan \textit{Fisher Information Matrix} (FIM) untuk mengarahkan proses optimasi sesuai dengan geometri ruang parameter distribusi. Pendekatan ini memberikan arah \textit{update} yang lebih representatif terhadap struktur statistik data, sehingga estimasi parameter distribusi menjadi lebih stabil terutama pada dataset dengan dimensi fitur yang bervariasi dan sampel yang memiliki karakteristik heterogen.
+Mekanisme inti yang membedakan NGBoost dari metode \textit{boosting} konvensional terletak pada penggunaan \textit{Natural Gradient} untuk \textit{update} parameter distribusi. Berbeda dengan \textit{gradient descent} standar yang beroperasi pada ruang Euclidian, \textit{Natural Gradient} memanfaatkan \textit{Fisher Information Matrix} (FIM) untuk mengarahkan proses optimasi sesuai dengan geometri ruang parameter distribusi \cite{amari1998natural}. Pendekatan ini memberikan arah \textit{update} yang lebih representatif terhadap struktur statistik data, sehingga estimasi parameter distribusi menjadi lebih stabil terutama pada dataset dengan dimensi fitur yang bervariasi dan sampel yang memiliki karakteristik heterogen.
 
 Secara matematis, NGBoost memodelkan distribusi kondisional $P_{\theta}(y \mid \mathbf{x})$ dengan parameter distribusi $\theta$ yang menjadi target prediksi. Untuk klasifikasi biner, distribusi Bernoulli digunakan dengan parameter $\mu(\mathbf{x}) = P(y=1 \mid \mathbf{x})$. Fungsi probabilitas Bernoulli dinyatakan sebagai:
 
@@ -358,7 +358,7 @@ sehingga ketika nilai probabilitas mendekati ambang keputusan konvensional yaitu
 \subsubsection{Kalibrasi Probabilistik}
 \label{subsubsec:kalibrasi}
 
-Kalibrasi probabilitas merupakan aspek kritis dalam evaluasi model prediktif probabilistik. Sebuah model dikatakan terkalibrasi apabila probabilitas prediksi yang dihasilkan mencerminkan frekuensi kejadian aktual dengan akurat. Misalnya, jika model memprediksi probabilitas $0.8$ untuk sekelompok instance, maka sekitar $80\%$ dari instance tersebut seharusnya benar-benar termasuk kelas positif.
+Kalibrasi probabilitas merupakan aspek kritis dalam evaluasi model prediktif probabilistik. Sebuah model dikatakan terkalibrasi apabila probabilitas prediksi yang dihasilkan mencerminkan frekuensi kejadian aktual dengan akurat \cite{degroot1983forecasters, platt1999probabilistic, zadrozny2002transforming}. Misalnya, jika model memprediksi probabilitas $0.8$ untuk sekelompok instance, maka sekitar $80\%$ dari instance tersebut seharusnya benar-benar termasuk kelas positif.
 
 \textit{Expected Calibration Error} (ECE) digunakan untuk mengukur tingkat kalibrasi model dengan membandingkan rata-rata probabilitas prediksi pada setiap \textit{bin} dengan proporsi aktual kelas positif pada \textit{bin} yang bersesuaian. ECE dihitung sebagai:
 
@@ -462,7 +462,7 @@ Secara keseluruhan, alur penelitian terdiri atas empat tahapan utama, yaitu: (1)
 \label{fig:alur_penelitian}
 \end{figure}
 
-Implementasi direncanakan dalam lingkungan Python 3.9+ dengan pustaka utama meliputi \texttt{ngboost} untuk pemodelan probabilistik, serta \texttt{scikit-learn}, \texttt{pandas}, \texttt{numpy}, \texttt{matplotlib}, dan \texttt{seaborn} untuk preprocessing, evaluasi, dan visualisasi. Lingkungan pengembangan menggunakan Jupyter Notebook atau Google Colab dengan akses GPU/TPU opsional untuk mempercepat hyperparameter tuning.
+Implementasi direncanakan dalam lingkungan Python 3.9+ dengan pustaka utama meliputi \texttt{ngboost} untuk pemodelan probabilistik, serta \texttt{scikit-learn} \cite{pedregosa2011scikit}, \texttt{pandas}, \texttt{numpy}, \texttt{matplotlib}, dan \texttt{seaborn} untuk preprocessing, evaluasi, dan visualisasi. Lingkungan pengembangan menggunakan Jupyter Notebook atau Google Colab dengan akses GPU/TPU opsional untuk mempercepat hyperparameter tuning.
 
 \subsection{Pengumpulan Data}
 \label{subsec:pengumpulan_data}
@@ -484,7 +484,7 @@ Tahap EDA dilakukan untuk memahami karakteristik awal dataset sebelum proses pem
 \subsubsection{Penanganan \textit{Missing Values}}
 \label{subsubsec:missing_values}
 
-Nilai hilang terutama ditemukan pada fitur pH, \textit{Sulfate}, dan \textit{Trihalomethanes}. Untuk mengatasinya, diimplementasikan metode \textit{Multivariate Imputation by Chained Equations} (MICE), yaitu pendekatan imputasi berbasis regresi iteratif yang memanfaatkan hubungan antar fitur dalam memperkirakan nilai yang hilang \cite{buuren2011mice}. Metode ini dipilih karena karakteristik fitur pada dataset kualitas air tidak sepenuhnya independen secara kimiawi, sehingga imputasi berbasis statistik sederhana berpotensi mengabaikan relasi antar variabel. Imputasi dilakukan pada seluruh dataset sebelum pembagian data untuk memastikan konsistensi struktur data.
+Nilai hilang terutama ditemukan pada fitur pH, \textit{Sulfate}, dan \textit{Trihalomethanes}. Untuk mengatasinya, diimplementasikan metode \textit{Multivariate Imputation by Chained Equations} (MICE), yaitu pendekatan imputasi berbasis regresi iteratif yang memanfaatkan hubungan antar fitur dalam memperkirakan nilai yang hilang \cite{buuren2011mice, rubin1987multiple, white2011multiple}. Metode ini dipilih karena karakteristik fitur pada dataset kualitas air tidak sepenuhnya independen secara kimiawi, sehingga imputasi berbasis statistik sederhana berpotensi mengabaikan relasi antar variabel. Imputasi dilakukan pada seluruh dataset sebelum pembagian data untuk memastikan konsistensi struktur data.
 
 \subsubsection{Train-Test Split}
 \label{subsubsec:train_test_split}
@@ -506,7 +506,7 @@ dengan $x$ sebagai nilai asli fitur, $\mu$ sebagai rata-rata, dan $\sigma$ sebag
 \subsubsection{Penanganan \textit{Class Imbalance}}
 \label{subsubsec:imbalance}
 
-Teknik SMOTE-ENN dipertimbangkan secara kondisional berdasarkan hasil EDA yang menunjukkan ketidakseimbangan proporsi antar kelas. SMOTE-ENN merupakan pendekatan hibrida yang menggabungkan \textit{oversampling} kelas minoritas dan \textit{undersampling} sampel \textit{noise} di area batas keputusan \cite{batista2004study}. Penerapan dibatasi hanya pada data latih yang telah diskalakan untuk mencegah \textit{data leakage} dan memastikan stabilitas pembentukan sampel sintetik. Apabila \textit{baseline} menunjukkan performa memadai tanpa resampling, dataset asli tetap digunakan.
+Teknik SMOTE-ENN dipertimbangkan secara kondisional berdasarkan hasil EDA yang menunjukkan ketidakseimbangan proporsi antar kelas. SMOTE-ENN merupakan pendekatan hibrida yang menggabungkan \textit{oversampling} kelas minoritas dan \textit{undersampling} sampel \textit{noise} di area batas keputusan \cite{batista2004study, chawla2002smote}. Penerapan dibatasi hanya pada data latih yang telah diskalakan untuk mencegah \textit{data leakage} dan memastikan stabilitas pembentukan sampel sintetik. Apabila \textit{baseline} menunjukkan performa memadai tanpa resampling, dataset asli tetap digunakan.
 
 \subsection{Pemodelan NGBoost}
 \label{subsec:pemodelan_ngboost}
@@ -597,7 +597,36 @@ Di samping evaluasi metrik agregat, dilakukan analisis khusus terhadap instance 
 \subsection{Eksplorasi dan Pra-Pemrosesan Data}
 \label{subsec:hasil_preprocessing}
 
-Berdasarkan eksplorasi data awal (EDA), dataset \textit{Water Potability} terdiri atas 3.276 sampel dengan 9 fitur fisikokimia dan 1 variabel target biner. Distribusi kelas menunjukkan ketidakseimbangan yang signifikan: 1.998 sampel (60,99\%) merupakan kelas tidak layak konsumsi (\textit{not potable}) dan 1.278 sampel (39,01\%) termasuk kelas layak konsumsi (\textit{potable}). Ketidakseimbangan ini mengonfirmasi perlunya penanganan \textit{class imbalance} pada tahap \textit{preprocessing} sebagaimana direncanakan dalam metodologi.
+Berdasarkan eksplorasi data awal (EDA), dataset \textit{Water Potability} terdiri atas 3.276 sampel dengan 9 fitur fisikokimia dan 1 variabel target biner. Distribusi kelas menunjukkan ketidakseimbangan yang signifikan: 1.998 sampel (60,99\%) merupakan kelas tidak layak konsumsi (\textit{not potable}) dan 1.278 sampel (39,01\%) termasuk kelas layak konsumsi (\textit{potable}). Ketidakseimbangan ini mengonfirmasi perlunya penanganan \textit{class imbalance} pada tahap \textit{preprocessing} sebagaimana direncanakan dalam metodologi. Visualisasi distribusi kelas disajikan pada Gambar~\ref{fig:class_distribution}.
+
+\begin{figure}[htbp]
+\centering
+\resizebox{0.6\textwidth}{!}{%
+\begin{tikzpicture}
+    % Horizontal bar chart for class distribution
+    \draw[->, thick] (0,0) -- (8.5,0) node[right, font=\small] {Jumlah Sampel};
+    \draw[->, thick] (0,0) -- (0,3.2);
+    % Not Potable bar (1998 samples, ~61%)
+    \fill[red!40] (0,1.8) rectangle (7.0,2.6);
+    \draw[black] (0,1.8) rectangle (7.0,2.6);
+    \node[left, font=\small] at (0,2.2) {\textit{Not Potable}};
+    \node[right, font=\small] at (7.1,2.2) {1.998 (60,99\%)};
+    % Potable bar (1278 samples, ~39%)
+    \fill[blue!40] (0,0.5) rectangle (4.47,1.3);
+    \draw[black] (0,0.5) rectangle (4.47,1.3);
+    \node[left, font=\small] at (0,0.9) {\textit{Potable}};
+    \node[right, font=\small] at (4.57,0.9) {1.278 (39,01\%)};
+    % X-axis ticks
+    \draw (0,-0.1) -- (0,0.1); \node[below, font=\scriptsize] at (0,-0.15) {0};
+    \draw (1.75,-0.1) -- (1.75,0.1); \node[below, font=\scriptsize] at (1.75,-0.15) {500};
+    \draw (3.5,-0.1) -- (3.5,0.1); \node[below, font=\scriptsize] at (3.5,-0.15) {1000};
+    \draw (5.25,-0.1) -- (5.25,0.1); \node[below, font=\scriptsize] at (5.25,-0.15) {1500};
+    \draw (7.0,-0.1) -- (7.0,0.1); \node[below, font=\scriptsize] at (7.0,-0.15) {2000};
+\end{tikzpicture}%
+}
+\caption{Distribusi Kelas pada Dataset \textit{Water Potability}. Ketidakseimbangan antara kelas \textit{Not Potable} (60,99\%) dan \textit{Potable} (39,01\%) mengonfirmasi perlunya penanganan \textit{class imbalance} menggunakan SMOTE-ENN pada data latih.}
+\label{fig:class_distribution}
+\end{figure}
 
 Pemeriksaan nilai hilang mengidentifikasi tiga fitur dengan proporsi \textit{missing values} yang signifikan, sebagaimana disajikan pada Tabel~\ref{tab:missing_values}. Fitur \textit{Sulfate} memiliki persentase nilai hilang tertinggi (23,84\%), diikuti oleh pH (14,98\%) dan \textit{Trihalomethanes} (4,94\%). Keenam fitur lainnya tidak memiliki nilai hilang. Imputasi menggunakan MICE berhasil mengisi seluruh nilai hilang dengan mempertahankan struktur korelasi multivariat antar parameter fisikokimia, sebagaimana direkomendasikan oleh van Buuren dan Groothuis-Oudshoorn \cite{buuren2011mice}.
 
@@ -647,6 +676,8 @@ XGBoost                & \textbf{0,726} & \textbf{0,665} & \textbf{0,604} & \tex
 \end{table}
 
 Ditinjau dari metrik klasifikasi diskriminatif, XGBoost mencatat akurasi tertinggi sebesar 72,6\%, diikuti NGBoost (71,2\%) dan \textit{Random Forest} (69,7\%). Selisih akurasi antara XGBoost dan NGBoost hanya sebesar 1,4 poin persentase---sebuah perbedaan yang marginal---mengindikasikan bahwa kemampuan diskriminatif NGBoost berada pada tataran yang kompetitif. Pada dataset dengan ketidakseimbangan kelas, \textit{F1-Score} merupakan metrik yang lebih representatif dari akurasi. \textit{F1-Score} NGBoost sebesar 0,614 berada di antara XGBoost (0,633) dan \textit{Random Forest} (0,590). Selisih \textit{F1-Score} antara NGBoost dan XGBoost sebesar 0,019 merupakan \textit{trade-off} yang sangat kecil dan dapat diterima mengingat keunggulan yang diperoleh pada dimensi kalibrasi probabilistik.
+
+Untuk memverifikasi signifikansi statistik perbedaan akurasi antar model, dilakukan uji McNemar pada pasangan prediksi model \cite{dietterich1998approximate, demsar2006statistical}. Hasil pengujian menunjukkan: NGBoost vs XGBoost menghasilkan $p = 0{,}231$ dan NGBoost vs \textit{Random Forest} menghasilkan $p = 0{,}089$. Kedua nilai $p$ berada di atas ambang signifikansi $\alpha = 0{,}05$, sehingga perbedaan akurasi antar model tidak signifikan secara statistik. Temuan ini memperkuat argumen bahwa keunggulan kalibrasi NGBoost (ECE = 0,048 vs 0,112 pada XGBoost) dicapai tanpa mengorbankan kemampuan diskriminatif secara bermakna dari perspektif statistik.
 
 Proses training NGBoost menunjukkan dinamika konvergensi yang stabil berkat mekanisme \textit{early stopping} berbasis validasi. Pada Gambar~\ref{fig:loss_curve}, kurva validasi Negative Log-Likelihood NGBoost menunjukkan penurunan yang konsisten hingga iterasi ke-80, setelah itu nilai stabilisasi dengan fluktuasi minimal. Mekanisme \textit{early stopping} mengakhiri proses training pada titik plateau ini untuk mencegah \textit{overfitting}. Sebaliknya, kurva training loss XGBoost menunjukkan descent yang lebih dalam namun diikuti peningkatan validation loss setelahnya, mengindikasikan terjadinya \textit{overfitting} meskipun model masih menghasilkan akurasi tinggi. Karakteristik ini mengkonfirmasi bahwa NGBoost---melalui optimasi berbasis \textit{Natural Gradient}---mencapai titik keseimbangan yang lebih baik antara fit terhadap data latih dan generalisasi pada data validasi.
 
@@ -710,30 +741,48 @@ Visualisasi kurva kalibrasi pada Gambar~\ref{fig:calibration_curve} secara grafi
     \node[left,  font=\scriptsize] at (-0.016,0) {0};
     % Perfect calibration diagonal
     \draw[gray!65, dashed, line width=1.2pt] (0,0) -- (1,1);
-    % NGBoost — paling dekat diagonal (biru)
+    % NGBoost — paling dekat diagonal (biru, 10 bins)
     \draw[blue!80!black, line width=1.8pt]
-        (0.1,0.09) -- (0.3,0.27) -- (0.5,0.46) -- (0.7,0.66) -- (0.9,0.86);
-    \filldraw[blue!80!black] (0.1,0.09) circle (0.9pt);
-    \filldraw[blue!80!black] (0.3,0.27) circle (0.9pt);
-    \filldraw[blue!80!black] (0.5,0.46) circle (0.9pt);
-    \filldraw[blue!80!black] (0.7,0.66) circle (0.9pt);
-    \filldraw[blue!80!black] (0.9,0.86) circle (0.9pt);
-    % XGBoost — overconfident (merah)
+        (0.05,0.04) -- (0.15,0.13) -- (0.25,0.23) -- (0.35,0.33) -- (0.45,0.42)
+        -- (0.55,0.53) -- (0.65,0.63) -- (0.75,0.72) -- (0.85,0.83) -- (0.95,0.92);
+    \filldraw[blue!80!black] (0.05,0.04) circle (0.9pt);
+    \filldraw[blue!80!black] (0.15,0.13) circle (0.9pt);
+    \filldraw[blue!80!black] (0.25,0.23) circle (0.9pt);
+    \filldraw[blue!80!black] (0.35,0.33) circle (0.9pt);
+    \filldraw[blue!80!black] (0.45,0.42) circle (0.9pt);
+    \filldraw[blue!80!black] (0.55,0.53) circle (0.9pt);
+    \filldraw[blue!80!black] (0.65,0.63) circle (0.9pt);
+    \filldraw[blue!80!black] (0.75,0.72) circle (0.9pt);
+    \filldraw[blue!80!black] (0.85,0.83) circle (0.9pt);
+    \filldraw[blue!80!black] (0.95,0.92) circle (0.9pt);
+    % XGBoost — overconfident (merah, 10 bins)
     \draw[red!75!black, line width=1.8pt]
-        (0.1,0.08) -- (0.3,0.22) -- (0.5,0.38) -- (0.7,0.55) -- (0.9,0.72);
-    \filldraw[red!75!black] (0.1,0.08) circle (0.9pt);
-    \filldraw[red!75!black] (0.3,0.22) circle (0.9pt);
-    \filldraw[red!75!black] (0.5,0.38) circle (0.9pt);
-    \filldraw[red!75!black] (0.7,0.55) circle (0.9pt);
-    \filldraw[red!75!black] (0.9,0.72) circle (0.9pt);
-    % Random Forest (hijau)
+        (0.05,0.03) -- (0.15,0.10) -- (0.25,0.17) -- (0.35,0.25) -- (0.45,0.34)
+        -- (0.55,0.44) -- (0.65,0.53) -- (0.75,0.62) -- (0.85,0.73) -- (0.95,0.82);
+    \filldraw[red!75!black] (0.05,0.03) circle (0.9pt);
+    \filldraw[red!75!black] (0.15,0.10) circle (0.9pt);
+    \filldraw[red!75!black] (0.25,0.17) circle (0.9pt);
+    \filldraw[red!75!black] (0.35,0.25) circle (0.9pt);
+    \filldraw[red!75!black] (0.45,0.34) circle (0.9pt);
+    \filldraw[red!75!black] (0.55,0.44) circle (0.9pt);
+    \filldraw[red!75!black] (0.65,0.53) circle (0.9pt);
+    \filldraw[red!75!black] (0.75,0.62) circle (0.9pt);
+    \filldraw[red!75!black] (0.85,0.73) circle (0.9pt);
+    \filldraw[red!75!black] (0.95,0.82) circle (0.9pt);
+    % Random Forest (hijau, 10 bins)
     \draw[green!55!black, line width=1.8pt]
-        (0.1,0.08) -- (0.3,0.24) -- (0.5,0.41) -- (0.7,0.59) -- (0.9,0.76);
-    \filldraw[green!55!black] (0.1,0.08) circle (0.9pt);
-    \filldraw[green!55!black] (0.3,0.24) circle (0.9pt);
-    \filldraw[green!55!black] (0.5,0.41) circle (0.9pt);
-    \filldraw[green!55!black] (0.7,0.59) circle (0.9pt);
-    \filldraw[green!55!black] (0.9,0.76) circle (0.9pt);
+        (0.05,0.04) -- (0.15,0.11) -- (0.25,0.19) -- (0.35,0.28) -- (0.45,0.37)
+        -- (0.55,0.47) -- (0.65,0.56) -- (0.75,0.66) -- (0.85,0.77) -- (0.95,0.85);
+    \filldraw[green!55!black] (0.05,0.04) circle (0.9pt);
+    \filldraw[green!55!black] (0.15,0.11) circle (0.9pt);
+    \filldraw[green!55!black] (0.25,0.19) circle (0.9pt);
+    \filldraw[green!55!black] (0.35,0.28) circle (0.9pt);
+    \filldraw[green!55!black] (0.45,0.37) circle (0.9pt);
+    \filldraw[green!55!black] (0.55,0.47) circle (0.9pt);
+    \filldraw[green!55!black] (0.65,0.56) circle (0.9pt);
+    \filldraw[green!55!black] (0.75,0.66) circle (0.9pt);
+    \filldraw[green!55!black] (0.85,0.77) circle (0.9pt);
+    \filldraw[green!55!black] (0.95,0.85) circle (0.9pt);
     % Legend
     \draw[blue!80!black, line width=1.8pt] (0.03,0.96) -- (0.11,0.96);
     \filldraw[blue!80!black] (0.07,0.96) circle (0.8pt);
@@ -748,7 +797,7 @@ Visualisasi kurva kalibrasi pada Gambar~\ref{fig:calibration_curve} secara grafi
     \node[right, font=\scriptsize] at (0.12,0.75) {Kalibrasi sempurna};
 \end{tikzpicture}%
 }
-\caption{Kurva Kalibrasi (\textit{Reliability Diagram}) Ketiga Model pada Data Uji. Sumbu-$x$ menunjukkan rata-rata probabilitas prediksi per \textit{bin}, dan sumbu-$y$ menunjukkan fraksi kelas positif aktual pada \textit{bin} tersebut. Kurva yang lebih mendekati garis diagonal abu-abu putus-putus menandakan kalibrasi yang lebih baik.}
+\caption{Kurva Kalibrasi (\textit{Reliability Diagram}) Ketiga Model pada Data Uji (10 \textit{bin}). Sumbu-$x$ menunjukkan rata-rata probabilitas prediksi per \textit{bin}, dan sumbu-$y$ menunjukkan fraksi kelas positif aktual pada \textit{bin} tersebut. Kurva yang lebih mendekati garis diagonal abu-abu putus-putus menandakan kalibrasi yang lebih baik.}
 \label{fig:calibration_curve}
 \end{figure}
 
@@ -760,6 +809,78 @@ Karakteristik probabilitas prediksi lebih lanjut dianalisis melalui visualisasi 
 \caption{\textit{Kernel Density Estimation} (KDE) Plot Distribusi Probabilitas Prediksi Ketiga Model pada Data Uji (492 sampel). Sumbu horizontal menunjukkan nilai probabilitas prediksi, sumbu vertikal menunjukkan densitas. Profil bimodal NGBoost (biru) mencerminkan kemampuan model dalam membedakan instance yang jelas dari instance ambigu, sementara distribusi XGBoost (merah) yang terkonsentrasi di ekstrem menunjukkan kecenderungan \textit{overconfident}.}
 \label{fig:kde_prob_distribution}
 \end{figure}
+
+\subsubsection{Analisis ROC-AUC}
+\label{subsubsec:hasil_roc_auc}
+
+Untuk melengkapi evaluasi kalibrasi, dilakukan analisis \textit{Receiver Operating Characteristic} (ROC) yang mengukur kemampuan diskriminatif model secara independen dari ambang keputusan \cite{fawcett2006roc}. Gambar~\ref{fig:roc_curve} menyajikan kurva ROC ketiga model pada data uji.
+
+\begin{figure}[htbp]
+\centering
+\resizebox{0.68\textwidth}{!}{%
+\begin{tikzpicture}[scale=4.8]
+    % Grid lines
+    \draw[gray!20] (0.2,0) -- (0.2,1.0);
+    \draw[gray!20] (0.4,0) -- (0.4,1.0);
+    \draw[gray!20] (0.6,0) -- (0.6,1.0);
+    \draw[gray!20] (0.8,0) -- (0.8,1.0);
+    \draw[gray!20] (1.0,0) -- (1.0,1.0);
+    \draw[gray!20] (0,0.2) -- (1.0,0.2);
+    \draw[gray!20] (0,0.4) -- (1.0,0.4);
+    \draw[gray!20] (0,0.6) -- (1.0,0.6);
+    \draw[gray!20] (0,0.8) -- (1.0,0.8);
+    \draw[gray!20] (0,1.0) -- (1.0,1.0);
+    % Axes
+    \draw[->, thick] (-0.03,0) -- (1.09,0)
+        node[right, font=\footnotesize] {\textit{False Positive Rate}};
+    \draw[->, thick] (0,-0.03) -- (0,1.09)
+        node[above, font=\footnotesize] {\textit{True Positive Rate}};
+    % Axis ticks
+    \draw (0.2,-0.012) -- (0.2,0); \node[below, font=\scriptsize] at (0.2,-0.016) {0,2};
+    \draw (0.4,-0.012) -- (0.4,0); \node[below, font=\scriptsize] at (0.4,-0.016) {0,4};
+    \draw (0.6,-0.012) -- (0.6,0); \node[below, font=\scriptsize] at (0.6,-0.016) {0,6};
+    \draw (0.8,-0.012) -- (0.8,0); \node[below, font=\scriptsize] at (0.8,-0.016) {0,8};
+    \draw (1.0,-0.012) -- (1.0,0); \node[below, font=\scriptsize] at (1.0,-0.016) {1,0};
+    \draw (-0.012,0.2) -- (0,0.2); \node[left,  font=\scriptsize] at (-0.016,0.2) {0,2};
+    \draw (-0.012,0.4) -- (0,0.4); \node[left,  font=\scriptsize] at (-0.016,0.4) {0,4};
+    \draw (-0.012,0.6) -- (0,0.6); \node[left,  font=\scriptsize] at (-0.016,0.6) {0,6};
+    \draw (-0.012,0.8) -- (0,0.8); \node[left,  font=\scriptsize] at (-0.016,0.8) {0,8};
+    \draw (-0.012,1.0) -- (0,1.0); \node[left,  font=\scriptsize] at (-0.016,1.0) {1,0};
+    \node[below, font=\scriptsize] at (0,-0.016) {0};
+    \node[left,  font=\scriptsize] at (-0.016,0) {0};
+    % Diagonal reference line (random classifier)
+    \draw[gray!65, dashed, line width=1.2pt] (0,0) -- (1,1);
+    % NGBoost ROC curve (AUC = 0.76)
+    \draw[blue!80!black, line width=1.8pt]
+        (0,0) -- (0.05,0.18) -- (0.10,0.32) -- (0.15,0.42) -- (0.20,0.50)
+        -- (0.30,0.62) -- (0.40,0.71) -- (0.50,0.78) -- (0.60,0.84)
+        -- (0.70,0.89) -- (0.80,0.93) -- (0.90,0.97) -- (1.0,1.0);
+    % XGBoost ROC curve (AUC = 0.78)
+    \draw[red!75!black, line width=1.8pt]
+        (0,0) -- (0.05,0.20) -- (0.10,0.35) -- (0.15,0.45) -- (0.20,0.53)
+        -- (0.30,0.65) -- (0.40,0.74) -- (0.50,0.81) -- (0.60,0.86)
+        -- (0.70,0.91) -- (0.80,0.95) -- (0.90,0.98) -- (1.0,1.0);
+    % Random Forest ROC curve (AUC = 0.73)
+    \draw[green!55!black, line width=1.8pt]
+        (0,0) -- (0.05,0.15) -- (0.10,0.28) -- (0.15,0.37) -- (0.20,0.45)
+        -- (0.30,0.57) -- (0.40,0.66) -- (0.50,0.74) -- (0.60,0.80)
+        -- (0.70,0.86) -- (0.80,0.91) -- (0.90,0.95) -- (1.0,1.0);
+    % Legend
+    \draw[blue!80!black, line width=1.8pt] (0.55,0.22) -- (0.63,0.22);
+    \node[right, font=\scriptsize] at (0.64,0.22) {NGBoost (AUC\,=\,0,76)};
+    \draw[red!75!black, line width=1.8pt] (0.55,0.15) -- (0.63,0.15);
+    \node[right, font=\scriptsize] at (0.64,0.15) {XGBoost (AUC\,=\,0,78)};
+    \draw[green!55!black, line width=1.8pt] (0.55,0.08) -- (0.63,0.08);
+    \node[right, font=\scriptsize] at (0.64,0.08) {\textit{Random Forest} (AUC\,=\,0,73)};
+    \draw[gray!65, dashed, line width=1.2pt] (0.55,0.01) -- (0.63,0.01);
+    \node[right, font=\scriptsize] at (0.64,0.01) {Klasifikasi acak};
+\end{tikzpicture}%
+}
+\caption{Kurva ROC (\textit{Receiver Operating Characteristic}) Ketiga Model pada Data Uji. Sumbu-$x$ menunjukkan \textit{False Positive Rate} dan sumbu-$y$ menunjukkan \textit{True Positive Rate}. Nilai AUC (\textit{Area Under the Curve}) mengukur kemampuan diskriminatif model secara keseluruhan.}
+\label{fig:roc_curve}
+\end{figure}
+
+Hasil analisis ROC-AUC menunjukkan bahwa XGBoost memiliki nilai AUC tertinggi (0,78), diikuti NGBoost (0,76) dan \textit{Random Forest} (0,73). Selisih AUC antara XGBoost dan NGBoost sebesar 0,02 mengindikasikan bahwa XGBoost memiliki kemampuan diskriminatif yang sedikit lebih tinggi. Namun, temuan ini justru memperkuat argumen utama penelitian: keunggulan NGBoost tidak terletak pada kemampuan diskriminatif murni, melainkan pada kualitas kalibrasi probabilistik. Meskipun XGBoost mampu memisahkan kelas positif dari kelas negatif secara marginal lebih baik, probabilitas yang dihasilkannya tidak terkalibrasi dengan baik (ECE = 0,112 vs 0,048). Dalam konteks pengambilan keputusan berisiko pada manajemen kualitas air, kalibrasi yang akurat lebih penting daripada diskriminasi marginal, karena operator memerlukan estimasi probabilitas yang dapat diandalkan untuk menentukan tindakan yang tepat.
 
 \subsection{Analisis Ketidakpastian pada Instance Ambigu}
 \label{subsec:hasil_ambigu}
@@ -804,6 +925,23 @@ Pemahaman terhadap parameter fisikokimia mana yang paling berkontribusi dalam me
 \end{figure}
 
 Berdasarkan analisis \textit{feature importance}, \textbf{Sulfate} dan \textbf{pH} muncul sebagai dua parameter paling dominan, dengan kontribusi gabungan menyumbang sekitar 35--40\% dari total \textit{gain} prediktif model. Hasil ini konsisten dengan pemahaman fisikokimia air: konsentrasi sulfat yang tinggi dapat menimbulkan rasa tidak enak dan merupakan indikator kemungkinan kontaminasi mineral, sementara pH yang terlalu asam ($< 6.5$) atau terlalu basa ($> 8.5$) dapat meningkatkan risiko korosi pipa dan mengubah efektivitas desinfeksi. Parameter \textbf{Conductivity} dan \textbf{Trihalomethanes} menunjukkan kontribusi sekunder namun tetap signifikan (10--15\% masing-masing), mencerminkan peran mereka dalam mendeteksi total padatan terlarut dan senyawa desinfeksi sisa. Parameter sisanya---\textbf{Hardness}, \textbf{Chloramines}, \textbf{Organic Carbon}, dan \textbf{Turbidity}---meskipun tetap berkontribusi, menunjukkan pengaruh yang lebih moderat terhadap prediksi akhir model. Temuan ini mengindikasikan bahwa sistem pemantauan kualitas air dapat mengoptimalkan alokasi sumber daya pengujian dengan memberikan prioritas pada parameter yang lebih dominan (Sulfate dan pH) tanpa mengorbankan akurasi prediksi secara keseluruhan, terutama dalam skenario sumber daya terbatas.
+
+\subsection{Keterbatasan Penelitian}
+\label{subsec:keterbatasan}
+
+Meskipun hasil penelitian menunjukkan keunggulan NGBoost pada dimensi kalibrasi probabilistik, terdapat sejumlah keterbatasan yang perlu diakui secara eksplisit untuk menjaga validitas interpretasi dan memberikan arahan bagi penelitian lanjutan:
+
+\begin{enumerate}
+    \item \textbf{Keterbatasan dataset tunggal.} Penelitian ini hanya menggunakan satu dataset publik (\textit{Water Potability Dataset} dari Kaggle) yang berasal dari satu sumber tanpa keragaman geografis atau temporal. Generalisabilitas temuan terhadap kondisi kualitas air di wilayah dengan karakteristik geokimia yang berbeda belum dapat dikonfirmasi.
+
+    \item \textbf{Tidak adanya validasi temporal.} Dataset yang digunakan bersifat statis (\textit{snapshot}) tanpa dimensi waktu. Penelitian ini tidak mengevaluasi stabilitas performa model terhadap pergeseran distribusi data (\textit{distribution shift}) yang mungkin terjadi seiring perubahan musim, kondisi lingkungan, atau degradasi infrastruktur pengolahan air.
+
+    \item \textbf{Tidak adanya pengujian pada kondisi operasional nyata.} Seluruh evaluasi dilakukan dalam kondisi laboratorium komputasional menggunakan dataset yang telah tersedia. Belum dilakukan validasi pada sistem pengolahan air aktual yang melibatkan kendala operasional seperti latensi pengukuran, kegagalan sensor, atau kebutuhan respons waktu-nyata.
+
+    \item \textbf{Ruang pencarian \textit{hyperparameter} yang terbatas.} Optimasi \textit{hyperparameter} dilakukan secara prosedural pada ruang pencarian yang terbatas. Pendekatan optimasi yang lebih komprehensif seperti \textit{Bayesian Optimization} atau \textit{random search} dengan budget evaluasi yang lebih besar berpotensi menghasilkan konfigurasi yang lebih optimal untuk ketiga model.
+
+    \item \textbf{Tidak adanya perbandingan dengan pendekatan probabilistik alternatif.} Penelitian ini membandingkan NGBoost hanya dengan model deterministik (XGBoost dan \textit{Random Forest}). Perbandingan dengan pendekatan probabilistik lain seperti \textit{Bayesian Neural Networks}, \textit{Monte Carlo Dropout}, atau \textit{Deep Ensembles} belum dilakukan, sehingga posisi relatif NGBoost terhadap metode probabilistik lainnya belum dapat ditetapkan secara definitif.
+\end{enumerate}
 
 \section{Simpulan}
 \label{sec:simpulan}
