@@ -6,6 +6,7 @@
 \usepackage{caption}
 \usepackage{subcaption}
 \usepackage[indonesian]{babel}
+\usetikzlibrary{shapes.geometric, arrows.meta, positioning, calc}
 % \linenumbers
 %--------------------
 
@@ -182,7 +183,88 @@ Gambar~\ref{fig:flowchart} mengilustrasikan keseluruhan alur metodologi peneliti
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.5\textwidth]{image_rev/diagram_flowchart.png}
+    \resizebox{0.85\textwidth}{!}{%
+    \begin{tikzpicture}[
+        node distance=0.8cm and 0.5cm,
+        startstop/.style={rectangle, rounded corners=8pt, minimum width=2.5cm, minimum height=0.8cm, align=center, draw=black, fill=red!20, font=\small\bfseries},
+        process/.style={rectangle, minimum width=3.5cm, minimum height=0.8cm, align=center, draw=black, fill=blue!15, font=\small},
+        decision/.style={diamond, aspect=2.5, minimum width=2.5cm, align=center, draw=black, fill=yellow!20, font=\small, inner sep=1pt},
+        data/.style={trapezium, trapezium left angle=70, trapezium right angle=110, minimum width=2.5cm, minimum height=0.8cm, align=center, draw=black, fill=cyan!15, font=\small},
+        model/.style={rectangle, minimum width=2.8cm, minimum height=0.8cm, align=center, draw=black, fill=green!15, font=\small},
+        eval/.style={rectangle, minimum width=3.5cm, minimum height=0.8cm, align=center, draw=black, fill=orange!15, font=\small},
+        arrow/.style={-{Stealth[length=2.5mm]}, thick},
+        yesno/.style={font=\scriptsize\itshape}
+    ]
+    % Start
+    \node (start) [startstop] {Start};
+
+    % Dataset
+    \node (dataset) [data, below=of start] {Water Potability Dataset\\(3276 sampel, 9 fitur)};
+
+    % EDA
+    \node (eda) [process, below=of dataset] {Exploratory Data Analysis};
+
+    % Decision: Missing Value?
+    \node (dec_mv) [decision, below=of eda] {Missing\\Value?};
+
+    % MICE
+    \node (mice) [process, right=2.0cm of dec_mv] {Imputasi MICE};
+
+    % Stratified Split
+    \node (split) [process, below=1.2cm of dec_mv] {Stratified Split (70:15:15)};
+
+    % StandardScaler
+    \node (scaler) [process, below=of split] {StandardScaler (fit pada data latih)};
+
+    % Decision: Class Imbalance?
+    \node (dec_ci) [decision, below=of scaler] {Class\\Imbalance?};
+
+    % SMOTE-ENN evaluation
+    \node (smote) [process, right=2.0cm of dec_ci, text width=4cm] {Evaluasi SMOTE-ENN\\$\rightarrow$ Tidak Diterapkan\\(menurunkan performa)};
+
+    % Parallel models
+    \node (train_label) [process, below=1.2cm of dec_ci, minimum width=10cm] {Pelatihan Model};
+
+    % Three model branches
+    \node (ngboost) [model, below=0.8cm of train_label, xshift=-3.8cm, text width=3.2cm] {NGBoost\\(Natural Gradient +\\Distribusi Bernoulli)};
+    \node (xgboost) [model, below=0.8cm of train_label, text width=3.2cm] {XGBoost\\(Gradient Boosting +\\Logistic)};
+    \node (rf) [model, below=0.8cm of train_label, xshift=3.8cm, text width=3.2cm] {Random Forest\\(Bagging + Voting)};
+
+    % Evaluation convergence
+    \node (eval) [eval, below=1.5cm of xgboost] {Evaluasi Metrik};
+
+    % Evaluation details
+    \node (metrics) [eval, below=of eval, text width=6cm] {Klasifikasi (Acc, Prec, Rec, F1)\\Kalibrasi (NLL, ECE) + ROC-AUC\\Uji McNemar (Signifikansi Statistik)};
+
+    % Uncertainty
+    \node (uncertainty) [eval, below=of metrics, text width=5cm] {Analisis Zona Ketidakpastian\\(Probabilitas NGBoost)};
+
+    % End
+    \node (end) [startstop, below=of uncertainty] {End};
+
+    % Arrows
+    \draw [arrow] (start) -- (dataset);
+    \draw [arrow] (dataset) -- (eda);
+    \draw [arrow] (eda) -- (dec_mv);
+    \draw [arrow] (dec_mv) -- node[yesno, above] {Ya} (mice);
+    \draw [arrow] (mice) |- (split);
+    \draw [arrow] (dec_mv) -- node[yesno, left] {Tidak} (split);
+    \draw [arrow] (split) -- (scaler);
+    \draw [arrow] (scaler) -- (dec_ci);
+    \draw [arrow] (dec_ci) -- node[yesno, above] {Ya} (smote);
+    \draw [arrow] (smote) |- (train_label);
+    \draw [arrow] (dec_ci) -- node[yesno, left] {Lanjut} (train_label);
+    \draw [arrow] (train_label.south) -| (ngboost.north);
+    \draw [arrow] (train_label.south) -- (xgboost.north);
+    \draw [arrow] (train_label.south) -| (rf.north);
+    \draw [arrow] (ngboost.south) |- (eval.west);
+    \draw [arrow] (xgboost.south) -- (eval.north);
+    \draw [arrow] (rf.south) |- (eval.east);
+    \draw [arrow] (eval) -- (metrics);
+    \draw [arrow] (metrics) -- (uncertainty);
+    \draw [arrow] (uncertainty) -- (end);
+    \end{tikzpicture}%
+    }
     \caption{Diagram alir metodologi penelitian.}
     \label{fig:flowchart}
 \end{figure}
