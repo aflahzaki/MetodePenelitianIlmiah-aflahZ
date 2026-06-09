@@ -139,9 +139,9 @@ Penelitian ini menggunakan \textit{Water Potability Dataset} \cite{kadiwal2021wa
 
 \subsection{Pra-pemrosesan Data}
 
-Pipeline pra-pemrosesan terdiri atas tahapan berikut. Pertama, imputasi nilai hilang menggunakan MICE (\textit{Multivariate Imputation by Chained Equations}) yang mempertahankan struktur korelasi multivariat antar parameter fisikokimia \cite{buuren2011mice, barrabes2025advances}. Kedua, pembagian data secara \textit{stratified} dengan rasio 70:15:15, menghasilkan set latih (N=2.292), set validasi (N=492), dan set uji (N=492). Ketiga, standarisasi fitur menggunakan \textit{StandardScaler} yang di-\textit{fit} hanya pada set latih untuk mencegah \textit{data leakage}.
+Pipeline pra-pemrosesan terdiri atas tahapan berikut. Pertama, imputasi nilai hilang menggunakan MICE (\textit{Multivariate Imputation by Chained Equations}) yang mempertahankan struktur korelasi multivariat antar parameter fisikokimia \cite{barrabes2025advances}. Kedua, pembagian data secara \textit{stratified} dengan rasio 70:15:15, menghasilkan set latih (N=2.292), set validasi (N=492), dan set uji (N=492). Ketiga, standarisasi fitur menggunakan \textit{StandardScaler} yang di-\textit{fit} hanya pada set latih untuk mencegah \textit{data leakage}.
 
-SMOTE-ENN dievaluasi secara kondisional sebagai teknik penanganan ketidakseimbangan kelas \cite{chawla2002smote, batista2004study}. Namun, hasil evaluasi menunjukkan bahwa penerapan SMOTE-ENN mereduksi jumlah sampel latih dari 2.292 menjadi sekitar 1.096 dan menurunkan performa seluruh model secara signifikan. Oleh karena itu, SMOTE-ENN tidak diterapkan pada pipeline final.
+SMOTE-ENN dievaluasi secara kondisional sebagai teknik penanganan ketidakseimbangan kelas. Namun, hasil evaluasi menunjukkan bahwa penerapan SMOTE-ENN mereduksi jumlah sampel latih dari 2.292 menjadi sekitar 1.096 dan menurunkan performa seluruh model secara signifikan. Oleh karena itu, SMOTE-ENN tidak diterapkan pada pipeline final.
 
 \subsection{Model NGBoost}
 
@@ -161,20 +161,20 @@ Optimasi parameter dilakukan menggunakan \textit{Natural Gradient} yang memperhi
 \tilde{\nabla}_\theta = \mathcal{I}(\theta)^{-1} \nabla_\theta \mathcal{L}
 \label{eq:natural_gradient}
 \end{equation}
-di mana $\mathcal{I}(\theta) = \mathbb{E}\left[\nabla_\theta \log P(y|\theta) \cdot \nabla_\theta \log P(y|\theta)^T\right]$ adalah FIM. Pendekatan ini menghasilkan pembaruan yang bersifat \textit{reparameterization-invariant}, berbeda dari \textit{gradient descent} standar yang beroperasi pada ruang Euclidian \cite{amari1998natural}.
+di mana $\mathcal{I}(\theta) = \mathbb{E}\left[\nabla_\theta \log P(y|\theta) \cdot \nabla_\theta \log P(y|\theta)^T\right]$ adalah FIM. Pendekatan ini menghasilkan pembaruan yang bersifat \textit{reparameterization-invariant}, berbeda dari \textit{gradient descent} standar yang beroperasi pada ruang Euclidian.
 
 \subsection{Model Baseline}
 
-Dua model baseline deterministik digunakan untuk perbandingan: (1) XGBoost \cite{chen2016xgboost}, algoritma \textit{gradient boosting} yang mengoptimasi fungsi objektif dengan regularisasi pada struktur pohon; dan (2) \textit{Random Forest} \cite{breiman2001random}, \textit{ensemble} pohon keputusan dengan \textit{bagging} dan seleksi fitur acak. Probabilitas prediksi dari kedua model baseline diperoleh melalui mekanisme internal masing-masing algoritma.
+Dua model baseline deterministik digunakan untuk perbandingan: (1) XGBoost, algoritma \textit{gradient boosting} yang mengoptimasi fungsi objektif dengan regularisasi pada struktur pohon; dan (2) \textit{Random Forest}, \textit{ensemble} pohon keputusan dengan \textit{bagging} dan seleksi fitur acak. Probabilitas prediksi dari kedua model baseline diperoleh melalui mekanisme internal masing-masing algoritma.
 
 \subsection{Metrik Evaluasi}
 
-Evaluasi dilakukan pada dua aspek. Pertama, metrik klasifikasi meliputi \textit{Accuracy}, \textit{Precision}, \textit{Recall}, \textit{F1-Score}, dan AUC-ROC \cite{fawcett2006roc}. Kedua, metrik kalibrasi probabilistik meliputi NLL (Persamaan~\ref{eq:nll}) dan \textit{Expected Calibration Error} (ECE) \cite{guo2017calibration}:
+Evaluasi dilakukan pada dua aspek. Pertama, metrik klasifikasi meliputi \textit{Accuracy}, \textit{Precision}, \textit{Recall}, \textit{F1-Score}, dan AUC-ROC. Kedua, metrik kalibrasi probabilistik meliputi NLL (Persamaan~\ref{eq:nll}) dan \textit{Expected Calibration Error} (ECE):
 \begin{equation}
 \text{ECE} = \sum_{m=1}^{M} \frac{|B_m|}{N} \left| \text{acc}(B_m) - \text{conf}(B_m) \right|
 \label{eq:ece}
 \end{equation}
-di mana $B_m$ adalah bin ke-$m$, $\text{acc}(B_m)$ adalah akurasi aktual, dan $\text{conf}(B_m)$ adalah rata-rata probabilitas prediksi dalam bin tersebut ($M=10$). Perbandingan antar model dilakukan menggunakan uji McNemar \cite{dietterich1998approximate} untuk menguji signifikansi statistik perbedaan performa.
+di mana $B_m$ adalah bin ke-$m$, $\text{acc}(B_m)$ adalah akurasi aktual, dan $\text{conf}(B_m)$ adalah rata-rata probabilitas prediksi dalam bin tersebut ($M=10$). Perbandingan antar model dilakukan menggunakan uji McNemar untuk menguji signifikansi statistik perbedaan performa.
 
 \subsection{Diagram Alir}
 
