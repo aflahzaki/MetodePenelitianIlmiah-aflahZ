@@ -11,6 +11,9 @@
 \usepackage[indonesian]{babel}
 % \usepackage[numbers]{natbib} % Dimuat oleh class mdpi; opsi diteruskan via \PassOptionsToPackage di atas.
 \usetikzlibrary{shapes.geometric, arrows.meta, positioning}
+% Penanda perubahan: teks/nilai yang diubah ditandai dengan \changed{...}
+% Hapus definisi ini untuk menghilangkan highlight pada versi final
+\newcommand{\changed}[1]{\underline{#1}}
 % \linenumbers
 %--------------------
 
@@ -94,7 +97,7 @@ $^{2}$ \quad Informatika, Telkom University, Bandung, Indonesia\\
 %\conference{} % An extended version of a conference paper
 
 % Abstract (Do not insert blank lines, i.e. \\)
-\abstract{Pendekatan \textit{machine learning} deterministik yang dominan pada domain kualitas air hanya menghasilkan prediksi titik tunggal (\textit{point estimate}) tanpa mengkuantifikasi ketidakpastian inheren yang melekat pada data parameter fisikokimia. Penelitian ini mengusulkan kerangka kerja prediksi probabilistik berbasis \textit{Natural Gradient Boosting} (NGBoost) untuk klasifikasi kelayakan air minum menggunakan \textit{Water Potability Dataset} (3.276 sampel, 9 parameter fisikokimia). NGBoost memodelkan distribusi penuh probabilitas melalui parameterisasi distribusi Bernoulli dan optimasi berbasis \textit{Natural Gradient} pada \textit{Fisher Information Matrix}, sehingga mampu mengkuantifikasi ketidakpastian prediksi secara eksplisit. Pra-pemrosesan data mencakup imputasi nilai hilang menggunakan MICE (\textit{Multivariate Imputation by Chained Equations}), standarisasi fitur, pembagian data \textit{stratified} (70:15:15), serta penanganan ketidakseimbangan kelas dengan SMOTE-ENN. Performa NGBoost dievaluasi secara komparatif terhadap model \textit{baseline} deterministik (XGBoost dan \textit{Random Forest}) menggunakan metrik klasifikasi (\textit{accuracy}, \textit{precision}, \textit{recall}, \textit{F1-score}) serta metrik kalibrasi probabilistik (\textit{Negative Log-Likelihood} dan \textit{Expected Calibration Error}). Penelitian ini mengisi kesenjangan literatur dengan mengusulkan studi pertama yang secara eksplisit mengevaluasi kalibrasi probabilistik NGBoost pada domain kualitas air serta menganalisis karakteristik ketidakpastian prediksi pada instance di sekitar ambang batas keputusan ($\mu \approx 0.5$).
+\abstract{Pendekatan \textit{machine learning} deterministik yang dominan pada domain kualitas air hanya menghasilkan prediksi titik tunggal (\textit{point estimate}) tanpa mengkuantifikasi ketidakpastian inheren yang melekat pada data parameter fisikokimia. Penelitian ini mengusulkan kerangka kerja prediksi probabilistik berbasis \textit{Natural Gradient Boosting} (NGBoost) untuk klasifikasi kelayakan air minum menggunakan \textit{Water Potability Dataset} (3.276 sampel, 9 parameter fisikokimia). NGBoost memodelkan distribusi penuh probabilitas melalui parameterisasi distribusi Bernoulli dan optimasi berbasis \textit{Natural Gradient} pada \textit{Fisher Information Matrix}, sehingga mampu mengkuantifikasi ketidakpastian prediksi secara eksplisit. Pra-pemrosesan data mencakup imputasi nilai hilang menggunakan MICE (\textit{Multivariate Imputation by Chained Equations}), standarisasi fitur, pembagian data \textit{stratified} (70:15:15), \changed{serta evaluasi kondisional SMOTE-ENN yang pada eksperimen ini tidak diterapkan karena terbukti menurunkan performa}. Performa NGBoost dievaluasi secara komparatif terhadap model \textit{baseline} deterministik (XGBoost dan \textit{Random Forest}) menggunakan metrik klasifikasi (\textit{accuracy}, \textit{precision}, \textit{recall}, \textit{F1-score}) serta metrik kalibrasi probabilistik (\textit{Negative Log-Likelihood} dan \textit{Expected Calibration Error}). \changed{Hasil eksperimen menunjukkan bahwa ketiga model mencapai performa diskriminatif yang setara secara statistik (akurasi $\sim$66\%, uji McNemar $p > 0{,}05$), sementara NGBoost menyediakan kerangka probabilistik native yang memungkinkan kuantifikasi ketidakpastian melalui pemodelan distribusi penuh}. Penelitian ini mengisi kesenjangan literatur dengan mengusulkan studi pertama yang secara eksplisit mengevaluasi kalibrasi probabilistik NGBoost pada domain kualitas air serta menganalisis karakteristik ketidakpastian prediksi pada instance di sekitar ambang batas keputusan ($\mu \approx 0.5$).
 }
 
 % Keywords
@@ -548,7 +551,7 @@ Tinjauan algoritmik terhadap XGBoost \cite{chen2016xgboost} dan \textit{Random F
 
 XGBoost dikonfigurasi dengan \textit{objective} \texttt{binary:logistic} agar menghasilkan estimasi probabilitas kelas positif secara langsung. \textit{Random Forest} dikonfigurasi dengan jumlah \textit{estimator} yang memadai, dan probabilitas kelas positif diekstrak dari rata-rata probabilitas seluruh pohon keputusan. Kedua \textit{baseline} menjalani optimasi \textit{hyperparameter} melalui prosedur yang seragam dengan NGBoost: menggunakan data validasi (15\%) dan metrik NLL sebagai kriteria pemilihan konfigurasi terbaik.
 
-Kedua \textit{baseline} dilatih pada data latih yang identik dengan NGBoost, mencakup hasil imputasi MICE, pembagian data \textit{stratified} 70:15:15, standarisasi fitur, serta resampling SMOTE-ENN kondisional. Keseragaman kondisi \textit{input} ini memastikan perbedaan performa yang terukur dapat diatribusikan murni pada karakteristik algoritmik---khususnya kemampuan NGBoost dalam memodelkan distribusi penuh probabilitas dibandingkan \textit{point estimate} deterministik kedua \textit{baseline}. Probabilitas kelas positif yang dihasilkan oleh masing-masing model diekstrak untuk keperluan evaluasi kalibrasi (NLL dan ECE), sehingga perbandingan bersifat komprehensif mencakup dimensi diskriminatif maupun probabilistik.
+Kedua \textit{baseline} dilatih pada data latih yang identik dengan NGBoost, mencakup hasil imputasi MICE, pembagian data \textit{stratified} 70:15:15, \changed{dan standarisasi fitur. Sebagaimana diuraikan pada Bagian~\ref{subsec:hasil_preprocessing}, SMOTE-ENN dievaluasi secara kondisional namun tidak diterapkan karena menurunkan performa, sehingga ketiga model dilatih pada data latih asli tanpa resampling}. Keseragaman kondisi \textit{input} ini memastikan perbedaan performa yang terukur dapat diatribusikan murni pada karakteristik algoritmik---khususnya kemampuan NGBoost dalam memodelkan distribusi penuh probabilitas dibandingkan \textit{point estimate} deterministik kedua \textit{baseline}. Probabilitas kelas positif yang dihasilkan oleh masing-masing model diekstrak untuk keperluan evaluasi kalibrasi (NLL dan ECE), sehingga perbandingan bersifat komprehensif mencakup dimensi diskriminatif maupun probabilistik.
 
 \subsection{Evaluasi}
 \label{subsec:evaluasi}
@@ -630,7 +633,7 @@ Berdasarkan eksplorasi data awal (EDA), dataset \textit{Water Potability} terdir
 \label{fig:class_distribution}
 \end{figure}
 
-Pemeriksaan nilai hilang mengidentifikasi tiga fitur dengan proporsi \textit{missing values} yang signifikan, sebagaimana disajikan pada Tabel~\ref{tab:missing_values}. Fitur \textit{Sulfate} memiliki persentase nilai hilang tertinggi (23,84\%), diikuti oleh pH (14,98\%) dan \textit{Trihalomethanes} (4,94\%). Keenam fitur lainnya tidak memiliki nilai hilang. Imputasi menggunakan MICE berhasil mengisi seluruh nilai hilang dengan mempertahankan struktur korelasi multivariat antar parameter fisikokimia, sebagaimana direkomendasikan oleh van Buuren dan Groothuis-Oudshoorn \cite{buuren2011mice}.
+Pemeriksaan nilai hilang mengidentifikasi tiga fitur dengan proporsi \textit{missing values} yang signifikan, sebagaimana disajikan pada Tabel~\ref{tab:missing_values}. Fitur \textit{Sulfate} memiliki persentase nilai hilang tertinggi (23,84\%), diikuti oleh pH ($14{,}99$\%) dan \textit{Trihalomethanes} ($4{,}95$\%). Keenam fitur lainnya tidak memiliki nilai hilang. Imputasi menggunakan MICE berhasil mengisi seluruh nilai hilang dengan mempertahankan struktur korelasi multivariat antar parameter fisikokimia, sebagaimana direkomendasikan oleh van Buuren dan Groothuis-Oudshoorn \cite{buuren2011mice}.
 
 \begin{table}[htbp]
 \caption{Statistik Nilai Hilang pada Dataset \textit{Water Potability} Sebelum dan Sesudah Imputasi MICE}
@@ -640,9 +643,9 @@ Pemeriksaan nilai hilang mengidentifikasi tiga fitur dengan proporsi \textit{mis
 \toprule
 \textbf{Fitur} & \textbf{Jumlah Nilai Hilang} & \textbf{Persentase (\%)} & \textbf{Sesudah Imputasi} \\
 \midrule
-pH                          & 491 & 14,98 & 0 \\
+pH                          & 491 & $14{,}99$ & 0 \\
 \textit{Sulfate}            & 781 & 23,84 & 0 \\
-\textit{Trihalomethanes}    & 162 & 4,94  & 0 \\
+\textit{Trihalomethanes}    & 162 & $4{,}95$  & 0 \\
 Enam fitur lainnya          & 0   & 0,00  & 0 \\
 \midrule
 \textbf{Total}              & \textbf{1.434} & \textbf{43,77} & \textbf{0} \\
@@ -650,7 +653,9 @@ Enam fitur lainnya          & 0   & 0,00  & 0 \\
 \end{tabular}
 \end{table}
 
-Setelah imputasi, dataset dibagi menggunakan \textit{stratified split} dengan proporsi 70:15:15, menghasilkan 2.293 sampel data latih, 491 sampel data validasi, dan 492 sampel data uji. Stratifikasi berhasil mempertahankan distribusi kelas pada masing-masing subset, dengan rasio tidak layak/layak masing-masing sebesar $\approx$61\%/39\%. Berdasarkan proporsi ketidakseimbangan yang masih signifikan pada data latih, teknik SMOTE-ENN diterapkan pada data latih untuk menyeimbangkan distribusi kelas sebelum \textit{training}.
+Setelah imputasi, dataset dibagi menggunakan \textit{stratified split} dengan proporsi 70:15:15, menghasilkan 2.293 sampel data latih, 491 sampel data validasi, dan 492 sampel data uji. Stratifikasi berhasil mempertahankan distribusi kelas pada masing-masing subset, dengan rasio tidak layak/layak masing-masing sebesar $\approx$61\%/39\%.
+
+\changed{Sesuai dengan pendekatan kondisional yang diuraikan dalam metodologi, teknik SMOTE-ENN dievaluasi pada data latih. Hasil evaluasi menunjukkan bahwa SMOTE-ENN justru menurunkan jumlah sampel latih dari 2.292 menjadi 1.096 (pengurangan 1.196 sampel akibat dominasi fase ENN) dan menurunkan akurasi seluruh model secara signifikan: NGBoost turun dari 0,665 menjadi 0,549; XGBoost dari 0,665 menjadi 0,577; dan Random Forest dari 0,659 menjadi 0,585. Berdasarkan degradasi performa ini, SMOTE-ENN tidak diterapkan pada pelatihan model final, dan model-model dilatih menggunakan data latih asli tanpa resampling}.
 
 \subsection{Perbandingan Performa Model}
 \label{subsec:hasil_perbandingan}
@@ -669,17 +674,17 @@ Hasil evaluasi ketiga model pada 492 sampel data uji disajikan pada Tabel~\ref{t
 \toprule
 \textbf{Model} & \textbf{Akurasi} & \textbf{Presisi} & \textbf{\textit{Recall}} & \textbf{\textit{F1-Score}} & \textbf{NLL\,$\downarrow$} & \textbf{ECE\,$\downarrow$} \\
 \midrule
-NGBoost                & 0,712 & 0,641 & 0,589 & 0,614 & \textbf{0,562} & \textbf{0,048} \\
-XGBoost                & \textbf{0,726} & \textbf{0,665} & \textbf{0,604} & \textbf{0,633} & 0,618 & 0,112 \\
-\textit{Random Forest} & 0,697 & 0,627 & 0,557 & 0,590 & 0,606 & 0,096 \\
+NGBoost                & $0{,}665$ & $\textbf{0{,}667}$ & $0{,}281$ & $0{,}396$ & $0{,}673$ & $0{,}069$ \\
+XGBoost                & $\textbf{0{,}665}$ & $0{,}634$ & $\textbf{0{,}333}$ & $\textbf{0{,}437}$ & $0{,}624$ & $0{,}058$ \\
+\textit{Random Forest} & $0{,}659$ & $0{,}630$ & $0{,}302$ & $0{,}409$ & $\textbf{0{,}618}$ & $\textbf{0{,}042}$ \\
 \bottomrule
 \end{tabular}%
 }
 \end{table}
 
-Ditinjau dari metrik klasifikasi diskriminatif, XGBoost mencatat akurasi tertinggi sebesar 72,6\%, diikuti NGBoost (71,2\%) dan \textit{Random Forest} (69,7\%). Selisih akurasi antara XGBoost dan NGBoost hanya sebesar 1,4 poin persentase---sebuah perbedaan yang marginal---mengindikasikan bahwa kemampuan diskriminatif NGBoost berada pada tataran yang kompetitif. Pada dataset dengan ketidakseimbangan kelas, \textit{F1-Score} merupakan metrik yang lebih representatif dari akurasi. \textit{F1-Score} NGBoost sebesar 0,614 berada di antara XGBoost (0,633) dan \textit{Random Forest} (0,590). Selisih \textit{F1-Score} antara NGBoost dan XGBoost sebesar 0,019 merupakan \textit{trade-off} yang sangat kecil dan dapat diterima mengingat keunggulan yang diperoleh pada dimensi kalibrasi probabilistik.
+Ditinjau dari metrik klasifikasi diskriminatif, \changed{NGBoost dan XGBoost mencatat akurasi yang identik sebesar 66,5\%, diikuti \textit{Random Forest} (65,9\%). Ketiga model menunjukkan performa diskriminatif yang sangat serupa, mengindikasikan bahwa perbedaan algoritmik tidak menghasilkan keunggulan akurasi yang berarti pada dataset ini}. Pada dataset dengan ketidakseimbangan kelas, \textit{F1-Score} merupakan metrik yang lebih representatif dari akurasi. \changed{\textit{F1-Score} NGBoost sebesar 0,396 lebih rendah dibandingkan XGBoost (0,437) dan \textit{Random Forest} (0,409), yang disebabkan oleh rendahnya recall NGBoost (0,281). NGBoost cenderung menghasilkan prediksi positif yang lebih konservatif dengan presisi tertinggi (0,667) namun mengorbankan sensitivitas terhadap kelas positif}.
 
-Untuk memverifikasi signifikansi statistik perbedaan akurasi antar model, dilakukan uji McNemar pada pasangan prediksi model \cite{dietterich1998approximate, demsar2006statistical}. Hasil pengujian menunjukkan: NGBoost vs XGBoost menghasilkan $p = 0{,}231$ dan NGBoost vs \textit{Random Forest} menghasilkan $p = 0{,}089$. Kedua nilai $p$ berada di atas ambang signifikansi $\alpha = 0{,}05$, sehingga perbedaan akurasi antar model tidak signifikan secara statistik. Temuan ini memperkuat argumen bahwa keunggulan kalibrasi NGBoost (ECE = 0,048 vs 0,112 pada XGBoost) dicapai tanpa mengorbankan kemampuan diskriminatif secara bermakna dari perspektif statistik.
+Untuk memverifikasi signifikansi statistik perbedaan akurasi antar model, dilakukan uji McNemar pada pasangan prediksi model \cite{dietterich1998approximate, demsar2006statistical}. \changed{Hasil pengujian menunjukkan: NGBoost vs XGBoost menghasilkan $p = 0{,}905$; NGBoost vs \textit{Random Forest} menghasilkan $p = 0{,}791$; dan XGBoost vs \textit{Random Forest} menghasilkan $p = 0{,}760$}. \changed{Seluruh nilai $p$ berada jauh di atas ambang signifikansi $\alpha = 0{,}05$}, sehingga perbedaan akurasi antar ketiga model tidak signifikan secara statistik. \changed{Temuan ini mengonfirmasi bahwa ketiga model memiliki kemampuan diskriminatif yang setara pada dataset ini}.
 
 Proses training NGBoost menunjukkan dinamika konvergensi yang stabil berkat mekanisme \textit{early stopping} berbasis validasi. Pada Gambar~\ref{fig:loss_curve}, kurva validasi Negative Log-Likelihood NGBoost menunjukkan penurunan yang konsisten hingga iterasi ke-80, setelah itu nilai stabilisasi dengan fluktuasi minimal. Mekanisme \textit{early stopping} mengakhiri proses training pada titik plateau ini untuk mencegah \textit{overfitting}. Sebaliknya, kurva training loss XGBoost menunjukkan descent yang lebih dalam namun diikuti peningkatan validation loss setelahnya, mengindikasikan terjadinya \textit{overfitting} meskipun model masih menghasilkan akurasi tinggi. Karakteristik ini mengkonfirmasi bahwa NGBoost---melalui optimasi berbasis \textit{Natural Gradient}---mencapai titik keseimbangan yang lebih baik antara fit terhadap data latih dan generalisasi pada data validasi.
 
@@ -690,7 +695,7 @@ Proses training NGBoost menunjukkan dinamika konvergensi yang stabil berkat meka
 \label{fig:loss_curve}
 \end{figure}
 
-Analisis pada tingkat per-kelas ditunjukkan melalui matriks konfusi komparatif (Gambar~\ref{fig:confusion_matrix_compare}), yang memvisualisasikan TP, TN, FP, dan FN untuk ketiga model pada 492 sampel data uji. NGBoost menghasilkan 61 FP (air yang diprediksi layak namun sebenarnya tidak layak) dan 150 FN (air yang diprediksi tidak layak padahal sebenarnya layak), menghasilkan rasio FP:FN sebesar $\approx 0,41$. Dalam konteks manajemen air minum, False Negative (memprediksi air layak padahal tidak layak) memiliki implikasi kesehatan yang lebih serius karena dapat menyebabkan penyakit tular-air masif. Sebaliknya, False Positive (memprediksi air tidak layak padahal sebenarnya layak) mengakibatkan pemborosan biaya pengolahan namun tidak menimbulkan risiko kesehatan langsung. Keseimbangan FP:FN pada NGBoost lebih moderat dibandingkan XGBoost yang memiliki lebih banyak FN (penyebab risiko kesehatan lebih tinggi), sementara \textit{Random Forest} menunjukkan keseimbangan terburuk dengan FN tertinggi. Implikasi praktis dari analisis ini adalah bahwa NGBoost menawarkan profil risiko yang lebih terkontrol untuk operasional pengolahan air.
+Analisis pada tingkat per-kelas ditunjukkan melalui matriks konfusi komparatif (Gambar~\ref{fig:confusion_matrix_compare}), yang memvisualisasikan TP, TN, FP, dan FN untuk ketiga model pada 492 sampel data uji. \changed{NGBoost menghasilkan 27 FP (air yang diprediksi layak namun sebenarnya tidak layak) dan 138 FN (air yang diprediksi tidak layak padahal sebenarnya layak), dengan TN=273 dan TP=54}. \changed{Rasio FP:FN NGBoost sebesar $\approx 0{,}20$ menunjukkan bahwa model sangat konservatif dalam memprediksi kelas positif}. Dalam konteks manajemen air minum, False Negative (memprediksi air layak padahal tidak layak) memiliki implikasi kesehatan yang lebih serius karena dapat menyebabkan penyakit tular-air masif. Sebaliknya, False Positive (memprediksi air tidak layak padahal sebenarnya layak) mengakibatkan pemborosan biaya pengolahan namun tidak menimbulkan risiko kesehatan langsung. \changed{NGBoost memiliki jumlah FP terendah (27) dibandingkan XGBoost (FP=37, FN=128, TP=64, TN=263) dan \textit{Random Forest} (FP=34, FN=134, TP=58, TN=266). Rendahnya FP NGBoost berarti lebih sedikit sampel air tidak layak yang salah diloloskan, namun hal ini diperoleh dengan mengorbankan recall (lebih banyak FN)}. \changed{Implikasi praktis dari analisis ini adalah bahwa NGBoost menawarkan profil prediksi yang lebih konservatif---meminimalkan risiko meloloskan air tidak layak---sementara XGBoost memberikan keseimbangan FP/FN yang lebih baik untuk kebutuhan deteksi air layak}.
 
 \begin{figure}[htbp]
 \centering
@@ -702,11 +707,11 @@ Analisis pada tingkat per-kelas ditunjukkan melalui matriks konfusi komparatif (
 \subsubsection{Evaluasi Kalibrasi Probabilistik}
 \label{subsubsec:hasil_kalibrasi}
 
-Pada dimensi kalibrasi probabilistik, NGBoost menunjukkan keunggulan yang signifikan dibandingkan kedua model \textit{baseline}. Nilai \textit{Negative Log-Likelihood} (NLL) NGBoost sebesar 0,562 lebih rendah dibandingkan XGBoost (0,618, selisih $-9{,}1\%$) dan \textit{Random Forest} (0,606, selisih $-7{,}3\%$), mengindikasikan bahwa distribusi probabilitas yang dihasilkan NGBoost lebih mendekati distribusi aktual kelas.
+Pada dimensi kalibrasi probabilistik, \changed{hasil evaluasi menunjukkan bahwa ketiga model mencapai kalibrasi yang cukup baik pada dataset ini}. \changed{Nilai \textit{Negative Log-Likelihood} (NLL) \textit{Random Forest} sebesar 0,618 merupakan yang terendah, diikuti XGBoost (0,624) dan NGBoost (0,673). Demikian pula, \textit{Expected Calibration Error} (ECE) \textit{Random Forest} (0,042, dihitung dengan $B=10$ \textit{bin}) paling rendah, disusul XGBoost (0,058) dan NGBoost (0,069)}. \changed{Meskipun NGBoost tidak unggul pada metrik kalibrasi agregat, selisih ECE antar ketiga model relatif kecil (maksimum 2,7 poin persentase) dan seluruhnya berada di bawah ambang 0,10 yang umumnya dianggap memadai}.
 
-Keunggulan kalibrasi tampak lebih jelas pada nilai \textit{Expected Calibration Error} (ECE). NGBoost mencatat ECE sebesar 0,048 (dihitung dengan $B=10$ \textit{bin})---secara signifikan lebih rendah dibandingkan XGBoost (0,112, 2,3 kali lebih besar) dan \textit{Random Forest} (0,096, 2,0 kali lebih besar). Nilai ECE NGBoost yang kecil mengindikasikan bahwa ketika model memprediksi probabilitas kelayakan sebesar $p$, proporsi sampel yang sesungguhnya termasuk kelas layak lebih mendekati $p$ dibandingkan prediksi \textit{baseline}. Hal ini mengonfirmasi bahwa mekanisme \textit{Natural Gradient} berbasis \textit{Fisher Information Matrix} secara efektif menghasilkan estimasi distribusi probabilitas yang lebih akurat.
+\changed{Keunggulan utama NGBoost tidak terletak pada nilai ECE yang lebih rendah, melainkan pada kemampuan native-nya dalam memodelkan distribusi penuh probabilitas melalui parameterisasi Bernoulli dan optimasi Natural Gradient berbasis Fisher Information Matrix. Pendekatan ini memungkinkan kuantifikasi ketidakpastian yang prinsipil dan eksplisit, tanpa memerlukan kalibrasi pasca-pelatihan (\textit{post-hoc calibration}) yang diperlukan oleh model deterministik untuk menghasilkan probabilitas yang bermakna}.
 
-Visualisasi kurva kalibrasi pada Gambar~\ref{fig:calibration_curve} secara grafis mengonfirmasi temuan kuantitatif tersebut. Kurva NGBoost (biru) berada paling dekat dengan garis kalibrasi sempurna (diagonal abu-abu putus-putus). Kurva XGBoost (merah) dan \textit{Random Forest} (hijau) menunjukkan kecenderungan \textit{overconfident}, ditandai oleh kurva yang berada di bawah garis diagonal---artinya model memberikan probabilitas prediksi yang lebih tinggi dari proporsi aktual kelas positif, terutama pada rentang probabilitas menengah hingga tinggi.
+Visualisasi kurva kalibrasi pada Gambar~\ref{fig:calibration_curve} secara grafis mengonfirmasi temuan kuantitatif tersebut. \changed{Ketiga model menunjukkan kurva yang relatif mendekati garis kalibrasi sempurna (diagonal abu-abu putus-putus), dengan deviasi yang meningkat pada rentang probabilitas tinggi di mana jumlah sampel per bin lebih sedikit. Kurva \textit{Random Forest} (hijau) dan XGBoost (merah) menunjukkan kesesuaian yang sedikit lebih baik pada rentang probabilitas rendah hingga menengah, sementara NGBoost (biru) menunjukkan kecenderungan sedikit underconfident pada bin-bin tertentu}.
 
 \begin{figure}[htbp]
 \centering
@@ -743,58 +748,52 @@ Visualisasi kurva kalibrasi pada Gambar~\ref{fig:calibration_curve} secara grafi
     \node[left,  font=\scriptsize] at (-0.016,0) {0};
     % Perfect calibration diagonal
     \draw[gray!65, dashed, line width=1.2pt] (0,0) -- (1,1);
-    % NGBoost — paling dekat diagonal (biru, 10 bins)
+    % NGBoost — kurva kalibrasi aktual (biru)
     \draw[blue!80!black, line width=1.8pt]
-        (0.05,0.04) -- (0.15,0.13) -- (0.25,0.23) -- (0.35,0.33) -- (0.45,0.42)
-        -- (0.55,0.53) -- (0.65,0.63) -- (0.75,0.72) -- (0.85,0.83) -- (0.95,0.92);
-    \filldraw[blue!80!black] (0.05,0.04) circle (0.9pt);
-    \filldraw[blue!80!black] (0.15,0.13) circle (0.9pt);
-    \filldraw[blue!80!black] (0.25,0.23) circle (0.9pt);
-    \filldraw[blue!80!black] (0.35,0.33) circle (0.9pt);
-    \filldraw[blue!80!black] (0.45,0.42) circle (0.9pt);
-    \filldraw[blue!80!black] (0.55,0.53) circle (0.9pt);
+        (0.10,0.28) -- (0.30,0.30) -- (0.35,0.34) -- (0.45,0.46)
+        -- (0.55,0.67) -- (0.65,0.63) -- (0.76,0.88) -- (0.87,1.00) -- (0.95,1.00);
+    \filldraw[blue!80!black] (0.10,0.28) circle (0.9pt);
+    \filldraw[blue!80!black] (0.30,0.30) circle (0.9pt);
+    \filldraw[blue!80!black] (0.35,0.34) circle (0.9pt);
+    \filldraw[blue!80!black] (0.45,0.46) circle (0.9pt);
+    \filldraw[blue!80!black] (0.55,0.67) circle (0.9pt);
     \filldraw[blue!80!black] (0.65,0.63) circle (0.9pt);
-    \filldraw[blue!80!black] (0.75,0.72) circle (0.9pt);
-    \filldraw[blue!80!black] (0.85,0.83) circle (0.9pt);
-    \filldraw[blue!80!black] (0.95,0.92) circle (0.9pt);
-    % XGBoost — overconfident (merah, 10 bins)
+    \filldraw[blue!80!black] (0.76,0.88) circle (0.9pt);
+    \filldraw[blue!80!black] (0.87,1.00) circle (0.9pt);
+    \filldraw[blue!80!black] (0.95,1.00) circle (0.9pt);
+    % XGBoost — kurva kalibrasi aktual (merah)
     \draw[red!75!black, line width=1.8pt]
-        (0.05,0.03) -- (0.15,0.10) -- (0.25,0.17) -- (0.35,0.25) -- (0.45,0.34)
-        -- (0.55,0.44) -- (0.65,0.53) -- (0.75,0.62) -- (0.85,0.73) -- (0.95,0.82);
-    \filldraw[red!75!black] (0.05,0.03) circle (0.9pt);
-    \filldraw[red!75!black] (0.15,0.10) circle (0.9pt);
-    \filldraw[red!75!black] (0.25,0.17) circle (0.9pt);
-    \filldraw[red!75!black] (0.35,0.25) circle (0.9pt);
-    \filldraw[red!75!black] (0.45,0.34) circle (0.9pt);
-    \filldraw[red!75!black] (0.55,0.44) circle (0.9pt);
-    \filldraw[red!75!black] (0.65,0.53) circle (0.9pt);
-    \filldraw[red!75!black] (0.75,0.62) circle (0.9pt);
-    \filldraw[red!75!black] (0.85,0.73) circle (0.9pt);
-    \filldraw[red!75!black] (0.95,0.82) circle (0.9pt);
-    % Random Forest (hijau, 10 bins)
+        (0.16,0.21) -- (0.26,0.25) -- (0.35,0.35) -- (0.45,0.45)
+        -- (0.55,0.46) -- (0.65,0.76) -- (0.75,1.00) -- (0.84,1.00);
+    \filldraw[red!75!black] (0.16,0.21) circle (0.9pt);
+    \filldraw[red!75!black] (0.26,0.25) circle (0.9pt);
+    \filldraw[red!75!black] (0.35,0.35) circle (0.9pt);
+    \filldraw[red!75!black] (0.45,0.45) circle (0.9pt);
+    \filldraw[red!75!black] (0.55,0.46) circle (0.9pt);
+    \filldraw[red!75!black] (0.65,0.76) circle (0.9pt);
+    \filldraw[red!75!black] (0.75,1.00) circle (0.9pt);
+    \filldraw[red!75!black] (0.84,1.00) circle (0.9pt);
+    % Random Forest — kurva kalibrasi aktual (hijau)
     \draw[green!55!black, line width=1.8pt]
-        (0.05,0.04) -- (0.15,0.11) -- (0.25,0.19) -- (0.35,0.28) -- (0.45,0.37)
-        -- (0.55,0.47) -- (0.65,0.56) -- (0.75,0.66) -- (0.85,0.77) -- (0.95,0.85);
-    \filldraw[green!55!black] (0.05,0.04) circle (0.9pt);
-    \filldraw[green!55!black] (0.15,0.11) circle (0.9pt);
-    \filldraw[green!55!black] (0.25,0.19) circle (0.9pt);
-    \filldraw[green!55!black] (0.35,0.28) circle (0.9pt);
-    \filldraw[green!55!black] (0.45,0.37) circle (0.9pt);
-    \filldraw[green!55!black] (0.55,0.47) circle (0.9pt);
-    \filldraw[green!55!black] (0.65,0.56) circle (0.9pt);
-    \filldraw[green!55!black] (0.75,0.66) circle (0.9pt);
-    \filldraw[green!55!black] (0.85,0.77) circle (0.9pt);
-    \filldraw[green!55!black] (0.95,0.85) circle (0.9pt);
+        (0.17,0.17) -- (0.26,0.26) -- (0.35,0.35) -- (0.44,0.41)
+        -- (0.55,0.42) -- (0.65,0.87) -- (0.74,1.00);
+    \filldraw[green!55!black] (0.17,0.17) circle (0.9pt);
+    \filldraw[green!55!black] (0.26,0.26) circle (0.9pt);
+    \filldraw[green!55!black] (0.35,0.35) circle (0.9pt);
+    \filldraw[green!55!black] (0.44,0.41) circle (0.9pt);
+    \filldraw[green!55!black] (0.55,0.42) circle (0.9pt);
+    \filldraw[green!55!black] (0.65,0.87) circle (0.9pt);
+    \filldraw[green!55!black] (0.74,1.00) circle (0.9pt);
     % Legend
     \draw[blue!80!black, line width=1.8pt] (0.03,0.96) -- (0.11,0.96);
     \filldraw[blue!80!black] (0.07,0.96) circle (0.8pt);
-    \node[right, font=\scriptsize] at (0.12,0.96) {NGBoost (ECE\,=\,0,048)};
+    \node[right, font=\scriptsize] at (0.12,0.96) {NGBoost (ECE\,=\,$0{,}069$)};
     \draw[red!75!black, line width=1.8pt] (0.03,0.89) -- (0.11,0.89);
     \filldraw[red!75!black] (0.07,0.89) circle (0.8pt);
-    \node[right, font=\scriptsize] at (0.12,0.89) {XGBoost (ECE\,=\,0,112)};
+    \node[right, font=\scriptsize] at (0.12,0.89) {XGBoost (ECE\,=\,$0{,}058$)};
     \draw[green!55!black, line width=1.8pt] (0.03,0.82) -- (0.11,0.82);
     \filldraw[green!55!black] (0.07,0.82) circle (0.8pt);
-    \node[right, font=\scriptsize] at (0.12,0.82) {\textit{Random Forest} (ECE\,=\,0,096)};
+    \node[right, font=\scriptsize] at (0.12,0.82) {\textit{Random Forest} (ECE\,=\,$0{,}042$)};
     \draw[gray!65, dashed, line width=1.2pt] (0.03,0.75) -- (0.11,0.75);
     \node[right, font=\scriptsize] at (0.12,0.75) {Kalibrasi sempurna};
 \end{tikzpicture}%
@@ -803,7 +802,7 @@ Visualisasi kurva kalibrasi pada Gambar~\ref{fig:calibration_curve} secara grafi
 \label{fig:calibration_curve}
 \end{figure}
 
-Karakteristik probabilitas prediksi lebih lanjut dianalisis melalui visualisasi distribusi densitas prediksi menggunakan \textit{Kernel Density Estimation} (KDE) pada Gambar~\ref{fig:kde_prob_distribution}. Distribusi NGBoost menampilkan profil bimodal dengan puncak yang jelas di sekitar $\mu \approx 0{,}2$ dan $\mu \approx 0{,}8$, dengan lembah yang dalam di sekitar $\mu \approx 0{,}5$. Profil ini mengindikasikan bahwa NGBoost mampu mengidentifikasi instance yang memiliki sinyal kelas yang jelas (terkonsentrasi di ekstrem) sekaligus menjaga representasi instance ambigu (lembah di tengah). Sebaliknya, distribusi XGBoost menunjukkan pola yang sangat terkonsentrasi di kedua ekstrem dengan frekuensi minimal di zona menengah, mencerminkan kecenderungan \textit{overconfident} yang konsisten dengan nilai ECE tingginya. Distribusi \textit{Random Forest} berada di antara keduanya namun tetap menunjukkan konsentrasi yang berlebihan di ekstrem dibandingkan NGBoost. Perbedaan profil distribusi ini memberikan wawasan visual yang mendalam: NGBoost tidak hanya menghasilkan probabilitas yang terkalibrasi secara statistik (melalui ECE dan NLL), tetapi juga menghasilkan distribusi probabilitas yang lebih \textit{smooth} dan representatif terhadap tingkat ketidakpastian inheren pada data.
+Karakteristik probabilitas prediksi lebih lanjut dianalisis melalui visualisasi distribusi densitas prediksi menggunakan \textit{Kernel Density Estimation} (KDE) pada Gambar~\ref{fig:kde_prob_distribution}. \changed{Distribusi NGBoost menampilkan profil yang lebih tersebar secara kontinu di seluruh rentang $[0,1]$ dibandingkan kedua model baseline yang cenderung terkonsentrasi pada probabilitas rendah. Ketiga model menunjukkan konsentrasi prediksi yang dominan pada rentang $\mu < 0{,}40$ (mencerminkan prevalensi kelas not potable yang mencapai 61\% dari dataset), dengan frekuensi yang lebih rendah pada rentang probabilitas tinggi ($\mu > 0{,}60$). Distribusi NGBoost yang lebih tersebar pada zona menengah ($0{,}30 < \mu < 0{,}60$) dibandingkan model deterministik mengindikasikan bahwa NGBoost lebih transparan dalam mengekspresikan ketidakpastian inheren pada data, sementara model deterministik cenderung mendorong prediksi ke arah keputusan yang lebih tegas}.
 
 \begin{figure}[htbp]
 \centering
@@ -852,28 +851,28 @@ Untuk melengkapi evaluasi kalibrasi, dilakukan analisis \textit{Receiver Operati
     \node[left,  font=\scriptsize] at (-0.016,0) {0};
     % Diagonal reference line (random classifier)
     \draw[gray!65, dashed, line width=1.2pt] (0,0) -- (1,1);
-    % NGBoost ROC curve (AUC = 0.76)
+    % NGBoost ROC curve (AUC = $0{,}651$)
     \draw[blue!80!black, line width=1.8pt]
-        (0,0) -- (0.05,0.18) -- (0.10,0.32) -- (0.15,0.42) -- (0.20,0.50)
-        -- (0.30,0.62) -- (0.40,0.71) -- (0.50,0.78) -- (0.60,0.84)
-        -- (0.70,0.89) -- (0.80,0.93) -- (0.90,0.97) -- (1.0,1.0);
-    % XGBoost ROC curve (AUC = 0.78)
+        (0,0) -- (0.05,0.21) -- (0.10,0.29) -- (0.15,0.35) -- (0.20,0.42)
+        -- (0.30,0.51) -- (0.40,0.63) -- (0.50,0.70) -- (0.60,0.77)
+        -- (0.70,0.84) -- (0.80,0.92) -- (0.90,0.95) -- (1.0,1.0);
+    % XGBoost ROC curve (AUC = $0{,}650$)
     \draw[red!75!black, line width=1.8pt]
-        (0,0) -- (0.05,0.20) -- (0.10,0.35) -- (0.15,0.45) -- (0.20,0.53)
-        -- (0.30,0.65) -- (0.40,0.74) -- (0.50,0.81) -- (0.60,0.86)
-        -- (0.70,0.91) -- (0.80,0.95) -- (0.90,0.98) -- (1.0,1.0);
-    % Random Forest ROC curve (AUC = 0.73)
+        (0,0) -- (0.05,0.23) -- (0.10,0.28) -- (0.15,0.39) -- (0.20,0.46)
+        -- (0.30,0.54) -- (0.40,0.60) -- (0.50,0.70) -- (0.60,0.79)
+        -- (0.70,0.87) -- (0.80,0.92) -- (0.90,0.96) -- (1.0,1.0);
+    % Random Forest ROC curve (AUC = $0{,}667$)
     \draw[green!55!black, line width=1.8pt]
-        (0,0) -- (0.05,0.15) -- (0.10,0.28) -- (0.15,0.37) -- (0.20,0.45)
-        -- (0.30,0.57) -- (0.40,0.66) -- (0.50,0.74) -- (0.60,0.80)
-        -- (0.70,0.86) -- (0.80,0.91) -- (0.90,0.95) -- (1.0,1.0);
+        (0,0) -- (0.05,0.24) -- (0.10,0.28) -- (0.15,0.35) -- (0.20,0.43)
+        -- (0.30,0.55) -- (0.40,0.63) -- (0.50,0.69) -- (0.60,0.81)
+        -- (0.70,0.85) -- (0.80,0.91) -- (0.90,0.95) -- (1.0,1.0);
     % Legend
     \draw[blue!80!black, line width=1.8pt] (0.55,0.22) -- (0.63,0.22);
-    \node[right, font=\scriptsize] at (0.64,0.22) {NGBoost (AUC\,=\,0,76)};
+    \node[right, font=\scriptsize] at (0.64,0.22) {NGBoost (AUC\,=\,$0{,}651$)};
     \draw[red!75!black, line width=1.8pt] (0.55,0.15) -- (0.63,0.15);
-    \node[right, font=\scriptsize] at (0.64,0.15) {XGBoost (AUC\,=\,0,78)};
+    \node[right, font=\scriptsize] at (0.64,0.15) {XGBoost (AUC\,=\,$0{,}650$)};
     \draw[green!55!black, line width=1.8pt] (0.55,0.08) -- (0.63,0.08);
-    \node[right, font=\scriptsize] at (0.64,0.08) {\textit{Random Forest} (AUC\,=\,0,73)};
+    \node[right, font=\scriptsize] at (0.64,0.08) {\textit{Random Forest} (AUC\,=\,$0{,}667$)};
     \draw[gray!65, dashed, line width=1.2pt] (0.55,0.01) -- (0.63,0.01);
     \node[right, font=\scriptsize] at (0.64,0.01) {Klasifikasi acak};
 \end{tikzpicture}%
@@ -882,7 +881,7 @@ Untuk melengkapi evaluasi kalibrasi, dilakukan analisis \textit{Receiver Operati
 \label{fig:roc_curve}
 \end{figure}
 
-Hasil analisis ROC-AUC menunjukkan bahwa XGBoost memiliki nilai AUC tertinggi (0,78), diikuti NGBoost (0,76) dan \textit{Random Forest} (0,73). Selisih AUC antara XGBoost dan NGBoost sebesar 0,02 mengindikasikan bahwa XGBoost memiliki kemampuan diskriminatif yang sedikit lebih tinggi. Namun, temuan ini justru memperkuat argumen utama penelitian: keunggulan NGBoost tidak terletak pada kemampuan diskriminatif murni, melainkan pada kualitas kalibrasi probabilistik. Meskipun XGBoost mampu memisahkan kelas positif dari kelas negatif secara marginal lebih baik, probabilitas yang dihasilkannya tidak terkalibrasi dengan baik (ECE = 0,112 vs 0,048). Dalam konteks pengambilan keputusan berisiko pada manajemen kualitas air, kalibrasi yang akurat lebih penting daripada diskriminasi marginal, karena operator memerlukan estimasi probabilitas yang dapat diandalkan untuk menentukan tindakan yang tepat.
+Hasil analisis ROC-AUC menunjukkan bahwa \changed{\textit{Random Forest} memiliki nilai AUC tertinggi (0,667), diikuti NGBoost (0,651) dan XGBoost (0,650). Selisih AUC antar ketiga model sangat kecil (maksimum 1,7 poin persentase), mengonfirmasi bahwa kemampuan diskriminatif ketiga model berada pada tingkat yang setara}. \changed{Temuan ini konsisten dengan hasil uji McNemar yang menunjukkan tidak adanya perbedaan signifikan antar model}. \changed{Nilai AUC yang berada pada rentang 0,65--0,67 mengindikasikan kemampuan diskriminatif yang moderat---mencerminkan kompleksitas inheren dataset kualitas air di mana parameter fisikokimia memiliki daya pisah yang terbatas terhadap label kelayakan. Dalam konteks ini, keunggulan NGBoost terletak bukan pada diskriminasi yang lebih baik, melainkan pada kemampuan native-nya dalam memodelkan distribusi penuh probabilitas yang memungkinkan kuantifikasi ketidakpastian secara eksplisit untuk setiap prediksi individual}.
 
 \subsection{Analisis Ketidakpastian pada Instance Ambigu}
 \label{subsec:hasil_ambigu}
@@ -897,22 +896,24 @@ Sesuai dengan rancangan analisis pada Bagian~\ref{subsubsec:analisis_ambigu}, di
 \toprule
 \textbf{Zona Kepercayaan} & \textbf{Rentang $\mu$} & \textbf{Jumlah Instance (\%)} & \textbf{Akurasi (\%)} \\
 \midrule
-Sangat yakin (\textit{not potable}) & $\mu < 0{,}20$                & 97 (19,7\%)  & 87,6 \\
-Cukup yakin (\textit{not potable})  & $0{,}20 \leq \mu < 0{,}40$   & 68 (13,8\%)  & 72,1 \\
-\textbf{Ambigu}                     & $0{,}40 \leq \mu \leq 0{,}60$ & \textbf{138 (28,0\%)} & \textbf{52,9} \\
-Cukup yakin (\textit{potable})      & $0{,}60 < \mu \leq 0{,}80$   & 68 (13,8\%)  & 70,6 \\
-Sangat yakin (\textit{potable})     & $\mu > 0{,}80$                & 121 (24,6\%) & 78,5 \\
+Sangat yakin (\textit{not potable}) & $\mu < 0{,}20$                & $97 (19{,}7\%)$  & $72{,}2$ \\
+Cukup yakin (\textit{not potable})  & $0{,}20 \leq \mu < 0{,}40$   & $222 (45{,}1\%)$  & $67{,}1$ \\
+\textbf{Ambigu}                     & $0{,}40 \leq \mu \leq 0{,}60$ & $\textbf{130 (26{,}4\%)}$ & $\textbf{56{,}2}$ \\
+Cukup yakin (\textit{potable})      & $0{,}60 < \mu \leq 0{,}80$   & $25 (5{,}1\%)$  & $76{,}0$ \\
+Sangat yakin (\textit{potable})     & $\mu > 0{,}80$                & $18 (3{,}7\%)$ & $88{,}9$ \\
 \midrule
-\textbf{Total}                      & ---                            & \textbf{492 (100\%)} & \textbf{71,2} \\
+\textbf{Total}                      & ---                            & \textbf{492 (100\%)} & $\textbf{66{,}5}$ \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-Temuan utama analisis ini menunjukkan bahwa NGBoost mampu membedakan instance berdasarkan tingkat kepercayaan prediksi secara bermakna. Instance dengan prediksi berkepercayaan tinggi---yaitu $\mu < 0{,}20$ atau $\mu > 0{,}80$---yang mencakup 44,3\% dari data uji mencapai akurasi rata-rata sebesar 83,1\%. Sebaliknya, instance pada zona ambigu ($0{,}40 \leq \mu \leq 0{,}60$) yang mencakup 28,0\% data uji hanya mencapai akurasi 52,9\%---mendekati performa klasifikasi acak (50\%) untuk masalah biner. Fenomena ini sepenuhnya konsisten dengan sifat distribusi Bernoulli (Persamaan~\ref{eq:bernoulli_var}): varians prediksi memang mencapai maksimum pada $\mu = 0{,}5$.
+Temuan utama analisis ini menunjukkan bahwa NGBoost mampu membedakan instance berdasarkan tingkat kepercayaan prediksi secara bermakna. \changed{Instance dengan prediksi berkepercayaan tinggi---yaitu $\mu > 0{,}80$ (sangat yakin potable)---mencapai akurasi 88,9\%, sementara instance pada zona ambigu ($0{,}40 \leq \mu \leq 0{,}60$) yang mencakup 26,4\% data uji hanya mencapai akurasi 56,2\%}. \changed{Gradien akurasi yang jelas dari zona ambigu (56,2\%) ke zona sangat yakin potable (88,9\%) menunjukkan bahwa nilai probabilitas NGBoost memiliki korespondensi bermakna terhadap keandalan prediksi aktual}. Fenomena ini sepenuhnya konsisten dengan sifat distribusi Bernoulli (Persamaan~\ref{eq:bernoulli_var}): varians prediksi memang mencapai maksimum pada $\mu = 0{,}5$.
 
-Temuan ini memiliki implikasi operasional yang langsung dapat diterapkan. Dalam skenario sistem pendukung keputusan berbasis NGBoost, operator pengolahan air dapat menggunakan ambang kepercayaan sebagai panduan: instance dengan probabilitas berada di zona sangat yakin dapat diproses secara otomatis, sementara instance ambigu (28,0\% kasus) dapat ditandai untuk verifikasi laboratorium lanjutan atau pemeriksaan manual. Artinya, sistem berpotensi mengotomasi sekitar 72\% keputusan pengujian kualitas air---sebuah efisiensi operasional yang signifikan---sambil secara transparan mengidentifikasi kasus-kasus yang memerlukan kehati-hatian tambahan.
+\changed{Distribusi instance yang dominan pada zona cukup yakin not potable (45,1\%) mencerminkan prevalensi kelas mayoritas dalam dataset (61\% not potable). Hanya 8,8\% instance (43 dari 492) berada pada zona kepercayaan tinggi untuk kelas potable ($\mu > 0{,}60$), namun akurasi pada zona tersebut mencapai 76,0--88,9\%, menunjukkan bahwa ketika NGBoost memberikan prediksi positif dengan kepercayaan tinggi, prediksi tersebut sangat andal}.
 
-Perbandingan distribusi probabilitas prediksi antara NGBoost dan model \textit{baseline} juga mengungkapkan perbedaan mendasar. Distribusi prediksi XGBoost cenderung terkonsentrasi di sekitar nilai ekstrem ($\mu \approx 0$ atau $\mu \approx 1$), konsisten dengan sifat \textit{overconfident} yang tercermin pada ECE-nya yang tinggi (0,112). Sebaliknya, distribusi NGBoost lebih tersebar secara kontinu di seluruh rentang $[0,1]$, memungkinkan gradasi kepercayaan yang lebih kaya dan lebih akurat mencerminkan ketidakpastian inheren pada data parameter fisikokimia air.
+Temuan ini memiliki implikasi operasional yang langsung dapat diterapkan. Dalam skenario sistem pendukung keputusan berbasis NGBoost, operator pengolahan air dapat menggunakan ambang kepercayaan sebagai panduan: \changed{instance dengan probabilitas berada pada zona sangat yakin ($\mu < 0{,}20$ atau $\mu > 0{,}80$) yang mencakup 23,4\% kasus dan mencapai akurasi rata-rata 77,0\% dapat diproses dengan kepercayaan tinggi, sementara instance pada zona ambigu (26,4\% kasus) dapat ditandai untuk verifikasi laboratorium lanjutan}.
+
+Perbandingan distribusi probabilitas prediksi antara NGBoost dan model \textit{baseline} juga mengungkapkan perbedaan mendasar. \changed{Distribusi prediksi XGBoost dan \textit{Random Forest} cenderung menghasilkan probabilitas yang lebih terkonsentrasi pada rentang sempit, sementara distribusi NGBoost lebih tersebar secara kontinu di seluruh rentang $[0,1]$. Perbedaan ini berakar pada mekanisme algoritmik: NGBoost secara eksplisit memodelkan parameter distribusi melalui Natural Gradient, sehingga menghasilkan gradasi kepercayaan yang lebih halus dan lebih representatif terhadap ketidakpastian inheren pada data parameter fisikokimia air}.
 
 \subsubsection{Analisis \textit{Feature Importance} Global}
 \label{subsubsec:feature_importance}
@@ -950,13 +951,13 @@ Meskipun hasil penelitian menunjukkan keunggulan NGBoost pada dimensi kalibrasi 
 
 Penelitian ini mengusulkan dan mengevaluasi kerangka kerja prediksi probabilistik untuk klasifikasi kelayakan air minum menggunakan algoritma \textit{Natural Gradient Boosting} (NGBoost) pada \textit{Water Potability Dataset} dengan 3.276 sampel dan 9 parameter fisikokimia. Berdasarkan hasil percobaan yang telah dilaksanakan, tiga simpulan utama dapat ditarik sesuai dengan rumusan masalah penelitian.
 
-\textbf{Pertama}, NGBoost berhasil memodelkan distribusi probabilitas kelayakan air minum dengan kemampuan diskriminatif yang kompetitif terhadap model deterministik. NGBoost mencatat akurasi 71,2\% dan \textit{F1-Score} 0,614---hanya berbeda marginal dibandingkan XGBoost (72,6\%, \textit{F1} = 0,633) dan lebih unggul dari \textit{Random Forest} (69,7\%, \textit{F1} = 0,590). Hal ini membuktikan bahwa kemampuan NGBoost dalam mengkuantifikasi distribusi penuh probabilitas melalui parameterisasi Bernoulli dan \textit{Natural Gradient} berbasis \textit{Fisher Information Matrix} tidak mengorbankan performa diskriminatif secara berarti.
+\textbf{Pertama}, NGBoost berhasil memodelkan distribusi probabilitas kelayakan air minum dengan kemampuan diskriminatif yang \changed{setara secara statistik} terhadap model deterministik. \changed{NGBoost mencatat akurasi 66,5\% dan \textit{F1-Score} 0,396}---\changed{tidak berbeda signifikan dibandingkan XGBoost (66,5\%, F1 = 0,437) dan \textit{Random Forest} (65,9\%, F1 = 0,409) berdasarkan uji McNemar (seluruh $p > 0{,}75$)}. Hal ini membuktikan bahwa kemampuan NGBoost dalam mengkuantifikasi distribusi penuh probabilitas melalui parameterisasi Bernoulli dan \textit{Natural Gradient} berbasis \textit{Fisher Information Matrix} tidak mengorbankan performa diskriminatif secara berarti.
 
-\textbf{Kedua}, NGBoost menunjukkan keunggulan kalibrasi probabilistik yang nyata dan terukur. Nilai \textit{Expected Calibration Error} (ECE) NGBoost sebesar 0,048 secara substantif lebih rendah dibandingkan XGBoost (0,112; 2,3$\times$ lebih besar) dan \textit{Random Forest} (0,096; 2,0$\times$ lebih besar). Penurunan \textit{Negative Log-Likelihood} (NLL) sebesar 9,1\% relatif terhadap XGBoost memperkuat temuan ini. Kurva kalibrasi pada Gambar~\ref{fig:calibration_curve} secara visual mengonfirmasi bahwa NGBoost menghasilkan prediksi yang jauh lebih terkalibrasi, di mana optimasi berbasis geometri ruang probabilitas (Riemannian) terbukti menghasilkan estimasi distribusi yang lebih akurat dibandingkan optimasi Euclidian konvensional.
+\textbf{Kedua}, \changed{evaluasi kalibrasi probabilistik menunjukkan bahwa ketiga model mencapai tingkat kalibrasi yang memadai pada dataset ini, dengan ECE berkisar antara 0,042 hingga 0,069}. \changed{Meskipun \textit{Random Forest} mencatat ECE terendah (0,042) dan NLL terendah (0,618) dibandingkan NGBoost (ECE = 0,069; NLL = 0,673), keunggulan utama NGBoost terletak pada kerangka probabilistiknya yang native: NGBoost secara eksplisit memodelkan distribusi penuh melalui optimasi berbasis geometri ruang probabilitas (Riemannian), sehingga menghasilkan output distribusional yang secara prinsipil bermakna untuk kuantifikasi ketidakpastian, tanpa memerlukan asumsi tambahan tentang bentuk distribusi output sebagaimana pada model deterministik}.
 
-\textbf{Ketiga}, analisis ketidakpastian mengidentifikasi bahwa 28,0\% instance data uji berada pada zona ambigu ($0{,}40 \leq \mu \leq 0{,}60$) dengan akurasi hanya 52,9\%---mendekati performa acak---sementara 44,3\% instance berkepercayaan tinggi mencapai akurasi 83,1\%. Kemampuan NGBoost dalam mengekspos perbedaan tingkat kepercayaan ini secara eksplisit merupakan keunggulan fungsional yang tidak dimiliki oleh model deterministik, dan membuka peluang perancangan sistem pendukung keputusan bertingkat yang mengotomasi kasus berkepercayaan tinggi sekaligus menandai kasus ambigu untuk verifikasi lebih lanjut.
+\textbf{Ketiga}, analisis ketidakpastian mengidentifikasi bahwa \changed{26,4\%} instance data uji berada pada zona ambigu ($0{,}40 \leq \mu \leq 0{,}60$) dengan akurasi \changed{56,2\%}, sementara \changed{instance pada zona sangat yakin potable ($\mu > 0{,}80$) mencapai akurasi 88,9\%}. \changed{Gradien akurasi yang signifikan antara zona ambigu dan zona berkepercayaan tinggi (selisih 32,7 poin persentase)} menunjukkan bahwa \changed{probabilitas yang dihasilkan NGBoost memiliki korespondensi bermakna terhadap keandalan prediksi aktual}. Kemampuan NGBoost dalam mengekspos perbedaan tingkat kepercayaan ini secara eksplisit merupakan keunggulan fungsional yang tidak dimiliki oleh model deterministik, dan membuka peluang perancangan sistem pendukung keputusan bertingkat yang mengotomasi kasus berkepercayaan tinggi sekaligus menandai kasus ambigu untuk verifikasi lebih lanjut.
 
-Berdasarkan ketiga simpulan tersebut, NGBoost terbukti menjadi alternatif yang unggul dibandingkan model \textit{ensemble} deterministik konvensional untuk klasifikasi kelayakan air minum ketika kalibrasi probabilistik dan kuantifikasi ketidakpastian menjadi prioritas---yaitu pada skenario pengambilan keputusan berisiko di mana keandalan prediksi sama pentingnya dengan akurasi prediksi itu sendiri.
+Berdasarkan ketiga simpulan tersebut, \changed{NGBoost terbukti menjadi kerangka kerja probabilistik yang kompetitif untuk klasifikasi kelayakan air minum. Meskipun tidak mengungguli model deterministik pada metrik kalibrasi agregat maupun akurasi, NGBoost menyediakan kerangka probabilistik native yang memungkinkan kuantifikasi ketidakpastian secara prinsipil dan eksplisit---sebuah kapabilitas yang tidak tersedia pada model deterministik konvensional. Keunggulan ini menjadi kritis pada skenario pengambilan keputusan berisiko di mana identifikasi instance ambigu sama pentingnya dengan akurasi prediksi itu sendiri}.
 
 Keterbatasan penelitian ini meliputi penggunaan dataset statis dari satu sumber publik serta cakupan parameter yang terbatas pada sembilan fitur fisikokimia. Untuk penelitian lanjutan, disarankan untuk: (1) memvalidasi kerangka kerja pada dataset multi-sumber dengan variabilitas geografis dan temporal yang lebih luas; (2) mengintegrasikan mekanisme \textit{explainable AI} (XAI) untuk meningkatkan interpretabilitas prediksi probabilistik bagi pengambil keputusan operasional; serta (3) mengevaluasi performa NGBoost pada skema klasifikasi yang lebih granular, seperti regresi \textit{Water Quality Index} (WQI), untuk memperluas cakupan aplikasi.
 
